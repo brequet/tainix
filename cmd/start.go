@@ -13,8 +13,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const BASE_NAME = "challenge"
-
 //go:embed template.js
 var jsTemplate string
 
@@ -94,20 +92,53 @@ func fetchChallenge(challengeCode string) (*ChallengeResponse, error) {
 }
 
 func generateJsFile(response *ChallengeResponse, challengeCode string) error {
-	challengeToken := fmt.Sprintf("const CHALLENGE_TOKEN = '%s';\n", response.Token)
+	challengeToken := fmt.Sprintf("console.log(\"CHALLENGE_TOKEN: '%s'\");\n", response.Token)
 
-	var inputVars strings.Builder
-	inputVars.WriteString("// Challenge variables\n")
-	for key, value := range response.Input {
-		inputVars.WriteString(fmt.Sprintf("const %s = '%v';\n", key, value))
+	jsContent := challengeToken + "\n" + generateInputVars(response) + "\n" + jsTemplate
+
+	folderPath := strings.Split(challengeCode, "_")[0]
+
+	err := os.MkdirAll(folderPath, 0755)
+	if err != nil {
+		return fmt.Errorf("failed to create folder for challenge: %w", err)
 	}
 
-	jsContent := challengeToken + "\n" + inputVars.String() + "\n" + jsTemplate
-
-	err := os.WriteFile(fmt.Sprintf("%s-%s.js", BASE_NAME, challengeCode), []byte(jsContent), 0644)
+	err = os.WriteFile(fmt.Sprintf("./%s/%s.js", folderPath, challengeCode), []byte(jsContent), 0644)
 	if err != nil {
 		return fmt.Errorf("failed to write JS file: %w", err)
 	}
 
 	return nil
+}
+
+func generateInputVars(response *ChallengeResponse) string {
+	var inputVars strings.Builder
+	inputVars.WriteString("// Challenge variables\n")
+	inputVars.WriteString(fmt.Sprintf("// INPUT = %v;\n", response.Input))
+
+	for key, value := range response.Input {
+		switch v := value.(type) {
+		case string:
+			inputVars.WriteString(fmt.Sprintf("const %s = '%v';\n", key, v))
+		case []interface{}:
+			// Handle array type
+			inputVars.WriteString(fmt.Sprintf("const %s = [", key))
+			for i, elem := range v {
+				if i > 0 {
+					inputVars.WriteString(", ")
+				}
+				switch e := elem.(type) {
+				case string:
+					inputVars.WriteString(fmt.Sprintf("'%v'", e))
+				default:
+					inputVars.WriteString(fmt.Sprintf("%v", e))
+				}
+			}
+			inputVars.WriteString("];\n")
+		default:
+			inputVars.WriteString(fmt.Sprintf("const %s = %v;\n", key, v))
+		}
+	}
+
+	return inputVars.String()
 }

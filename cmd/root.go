@@ -14,7 +14,7 @@ func RootCommand() *cobra.Command {
 	}
 
 	rootCmd.AddCommand(startCommand())
-	rootCmd.AddCommand(testCommand())
+	rootCmd.AddCommand(submitCommand())
 
 	return rootCmd
 }
