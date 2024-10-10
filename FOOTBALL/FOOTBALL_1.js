@@ -1,11 +1,21 @@
-// INPUT = map[joueurs:[3 1 45 40 41 50 5 37 52 2 46 49 8 9 25 60 17 14 6 59 31 55 20 15 18 48 30 57 7 35 13]];
-console.log("CHALLENGE_TOKEN: '15cb13203747738ea6d54aa638e92ccfe1c41c8719fce12443523444428500e293cd14fded21ca0a'");
+// INPUT = map[joueurs:[33 17 22 19 21 10 2 44 35 41 46 52 20 15 51 32 58 29 47 6 40 5 12 53 59 11 16 27 45 3 60]];
+console.log(
+  "CHALLENGE_TOKEN: 'a46a593217f721c127198ba55837f374b39adb5788d4bdfb537dd1c52c777c25e8f19c580609877a'"
+);
 
 // Challenge variables
-const joueurs = [3, 1, 45, 40, 41, 50, 5, 37, 52, 2, 46, 49, 8, 9, 25, 60, 17, 14, 6, 59, 31, 55, 20, 15, 18, 48, 30, 57, 7, 35, 13];
+const joueurs = [
+  33, 17, 22, 19, 21, 10, 2, 44, 35, 41, 46, 52, 20, 15, 51, 32, 58, 29, 47, 6,
+  40, 5, 12, 53, 59, 11, 16, 27, 45, 3, 60,
+];
 
 function solveProblem() {
-  return "Your answer here";
+  joueursWithIndex = joueurs.map((joueur, index) => ({ joueur, index }));
+  joueursWithIndex.sort((a, b) => b.joueur - a.joueur);
+  return joueursWithIndex
+    .slice(0, 11)
+    .map((j) => j.index)
+    .join("-");
 }
 
 console.log(`Answer: '${solveProblem()}'`);
