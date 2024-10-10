@@ -6,6 +6,10 @@ const ennemis = ['x:32 pv:106', 'x:36 pv:72', 'x:14 pv:24', 'x:8 pv:23', 'x:17 p
 
 
 function solveProblem(ennemis) {
+    ennemis.map(e => e.split(" "))
+        .map(e => { return { x: e[0].split(":")[1], pv: e[1].split(":")[1] } })
+        .sort((a, b) => a.x - b.x)
+        .log()
     return "";
 }
 
@@ -15,16 +19,16 @@ function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
     // STEPS
-	// [1/10] Je me Déplace de 13 pour viser l'ennemi à la position 13
-	// [2/10] Je fais Feu 2 fois pour vaincre l'ennemi qui a 13 PV
-	// [3/10] Je me Déplace de 1 pour viser l'ennemi à la position 14
-	// [4/10] Je fais Feu 2 fois pour vaincre l'ennemi qui a 12 PV
-	// [5/10] Je me Déplace de 7 pour viser l'ennemi à la position 21
-	// [6/10] Je fais Feu 1 fois pour vaincre l'ennemi qui a 10 PV
-	// [7/10] Je me Déplace de 6 pour viser l'ennemi à la position 27
-	// [8/10] Je fais Feu 5 fois pour vaincre l'ennemi qui a 46 PV
-	// [9/10] Je me Déplace de 12 pour viser l'ennemi à la position 39
-	// [10/10] Je fais Feu 2 fois pour vaincre l'ennemi qui a 19 PV
+    // [1/10] Je me Déplace de 13 pour viser l'ennemi à la position 13
+    // [2/10] Je fais Feu 2 fois pour vaincre l'ennemi qui a 13 PV
+    // [3/10] Je me Déplace de 1 pour viser l'ennemi à la position 14
+    // [4/10] Je fais Feu 2 fois pour vaincre l'ennemi qui a 12 PV
+    // [5/10] Je me Déplace de 7 pour viser l'ennemi à la position 21
+    // [6/10] Je fais Feu 1 fois pour vaincre l'ennemi qui a 10 PV
+    // [7/10] Je me Déplace de 6 pour viser l'ennemi à la position 27
+    // [8/10] Je fais Feu 5 fois pour vaincre l'ennemi qui a 46 PV
+    // [9/10] Je me Déplace de 12 pour viser l'ennemi à la position 39
+    // [10/10] Je fais Feu 2 fois pour vaincre l'ennemi qui a 19 PV
 
 
     const ennemis = ['x:13 pv:13', 'x:14 pv:12', 'x:39 pv:19', 'x:27 pv:46', 'x:21 pv:10'];
