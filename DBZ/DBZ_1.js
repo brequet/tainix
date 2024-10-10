@@ -7,7 +7,22 @@ const force_vegeta = 157;
 
 
 function solveProblem(force_vegeta, ennemis) {
-    return "";
+    let level = 1
+    let puissance = force_vegeta
+    let i = 0
+    while (true) {
+        if (i > ennemis.length - 1) break;
+
+        if (level * puissance > ennemis[i]) {
+            puissance += Math.trunc(ennemis[i] * 0.1)
+            console.log('adversaire de puissance ' + ennemis[i] + ' est finalement défait. Nouvelle puissance de végéta : ' + puissance * level)
+            i++
+        } else {
+            level++
+            console.log('adversaire de puissance ' + ennemis[i] + ' est trop fort ! Je monte d\'un niveau !')
+        }
+    }
+    return level * puissance;
 }
 
 console.log(`Answer: '${solveProblem(force_vegeta, ennemis)}'`);
@@ -16,19 +31,19 @@ function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
     // STEPS
-	// [1/9] L'adversaire de puissance 221 est trop fort ! Je monte d'un niveau !
-	// [2/9] L'adversaire de puissance 221 est finalement défait. La puissance de végéta passe à 366
-	// [3/9] L'adversaire de puissance 509 est trop fort ! Je monte d'un niveau !
-	// [4/9] L'adversaire de puissance 509 est finalement défait. La puissance de végéta passe à 699
-	// [5/9] L'adversaire de puissance 512 est défait facilement. La puissance de végéta passe à 852
-	// [6/9] L'adversaire de puissance 1439 est trop fort ! Je monte d'un niveau !
-	// [7/9] L'adversaire de puissance 1439 est trop fort ! Je monte d'un niveau !
-	// [8/9] L'adversaire de puissance 1439 est trop fort ! Je monte d'un niveau !
-	// [9/9] L'adversaire de puissance 1439 est finalement défait. La puissance de végéta passe à 2562
+    // [1/9] L'adversaire de puissance 221 est trop fort ! Je monte d'un niveau !
+    // [2/9] L'adversaire de puissance 221 est finalement défait. La puissance de végéta passe à 366
+    // [3/9] L'adversaire de puissance 509 est trop fort ! Je monte d'un niveau !
+    // [4/9] L'adversaire de puissance 509 est finalement défait. La puissance de végéta passe à 699
+    // [5/9] L'adversaire de puissance 512 est défait facilement. La puissance de végéta passe à 852
+    // [6/9] L'adversaire de puissance 1439 est trop fort ! Je monte d'un niveau !
+    // [7/9] L'adversaire de puissance 1439 est trop fort ! Je monte d'un niveau !
+    // [8/9] L'adversaire de puissance 1439 est trop fort ! Je monte d'un niveau !
+    // [9/9] L'adversaire de puissance 1439 est finalement défait. La puissance de végéta passe à 2562
 
 
     const ennemis = [221, 509, 512, 1439];
-const force_vegeta = 161;
+    const force_vegeta = 161;
 
     const expected = '2562'
 

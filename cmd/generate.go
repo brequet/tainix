@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
 	"regexp"
 	"strings"
 
@@ -169,5 +170,14 @@ func generateTestJsFile(challengeCode, fileContent string) error {
 
 	fmt.Printf("Generated file at: %s\n", filePath)
 
+	return openIsVscode(filePath)
+}
+
+func openIsVscode(filePath string) error {
+	cmd := exec.Command("code", filePath)
+	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("failed to open file in VSCode: %w", err)
+	}
 	return nil
 }
