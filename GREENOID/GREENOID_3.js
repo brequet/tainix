@@ -7,7 +7,7 @@ console.log(
 const robots =
   "PCDPDDHDDCCHDPPDDDDDDDDCDDHDDDHHDDCDDHDDHDCDHDDHPDDPDDDHCPCPDPDPCDHDDPDDDDHDHDCHDDCDCHDDHDD";
 
-function solveProblem() {
+function solveProblem(robots) {
   const dict = stringToDictOfCharOccurrences(robots);
 
   console.debug("debugging", dict.length);
@@ -19,7 +19,7 @@ function solveProblem() {
     [null, -Infinity]
   );
 
-  ans = {
+  const ans = {
     C: "CREATE",
     H: "HEAL",
     P: "PRESERVE",
@@ -29,7 +29,23 @@ function solveProblem() {
   return `${ans[maxKeyValue[0]]}_${maxKeyValue[1]}`;
 }
 
-console.log(`Answer: '${solveProblem()}'`);
+console.log(`Answer: '${solveProblem(robots)}'`);
+test();
+
+function test() {
+  const robots = "DHPDDDDDCHCPDHCPPPDPHDDDDDDHCDDCDDDDHDDCDCCHDHCDDHCDHHCDDPHDCDPCHHDPPHDDHDDDDHDDCPPDDCDCHDCCCDPDH"
+
+  const result = solveProblem(robots);
+
+  const expected = "DESTROY_46"
+
+  if (result !== expected) {
+    throw new Error(`Expected ${expected}, got ${result}`);
+  } else {
+    console.log("Test passed !");
+  }
+
+}
 
 /**
  * Predefined utility functions
@@ -42,3 +58,5 @@ function stringToDictOfCharOccurrences(str) {
     return acc;
   }, {});
 }
+
+const cl = console.log

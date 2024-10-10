@@ -21,7 +21,7 @@ Array.prototype.sortDesc = function () {
 };
 
 function solveProblem() {
-  return "Your answer here";
+  return "";
 }
 
 console.log(`Answer: '${solveProblem()}'`);

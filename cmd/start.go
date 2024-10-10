@@ -1,15 +1,13 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 	"strings"
 
 	_ "embed"
 
+	"github.com/brequet/tainix/tainix"
 	"github.com/spf13/cobra"
 )
 
@@ -34,7 +32,7 @@ func runStartCommand(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	response, err := fetchChallenge(challengeCode)
+	response, err := tainix.FetchChallenge(challengeCode)
 	if err != nil {
 		fmt.Printf("Error fetching challenge: %v\n", err)
 		os.Exit(1)
@@ -49,49 +47,7 @@ func runStartCommand(cmd *cobra.Command, args []string) {
 	fmt.Println("Challenge fetched and JS file generated successfully!")
 }
 
-type ChallengeResponse struct {
-	Input   map[string]interface{} `json:"input"`
-	Token   string                 `json:"token"`
-	Success bool                   `json:"success"`
-}
-
-func fetchChallenge(challengeCode string) (*ChallengeResponse, error) {
-	token := os.Getenv("TAINIX_TOKEN")
-	if token == "" {
-		return nil, fmt.Errorf("TAINIX_TOKEN environment variable is not set")
-	}
-
-	url := fmt.Sprintf("https://tainix.fr/api/games/start/%s/%s", token, challengeCode)
-
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, fmt.Errorf("failed to fetch challenge: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %w", err)
-	}
-
-	var challenge ChallengeResponse
-	err = json.Unmarshal(body, &challenge)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal response: %w", err)
-	}
-
-	if !challenge.Success {
-		return nil, fmt.Errorf("challenge fetch was not successful")
-	}
-
-	return &challenge, nil
-}
-
-func generateJsFile(response *ChallengeResponse, challengeCode string) error {
+func generateJsFile(response *tainix.ChallengeResponse, challengeCode string) error {
 	challengeToken := fmt.Sprintf("console.log(\"CHALLENGE_TOKEN: '%s'\");\n", response.Token)
 
 	jsContent := challengeToken + "\n" + generateInputVars(response) + "\n" + jsTemplate
@@ -111,7 +67,7 @@ func generateJsFile(response *ChallengeResponse, challengeCode string) error {
 	return nil
 }
 
-func generateInputVars(response *ChallengeResponse) string {
+func generateInputVars(response *tainix.ChallengeResponse) string {
 	var inputVars strings.Builder
 	inputVars.WriteString("// Challenge variables\n")
 	inputVars.WriteString(fmt.Sprintf("// INPUT = %v;\n", response.Input))
