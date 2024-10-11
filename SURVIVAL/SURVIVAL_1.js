@@ -2,28 +2,39 @@ init();
 test();
 
 // Challenge variables
-{{.ChallengeVariables }}
+const islandX = 38;
+const islandY = 59;
+const planes = ['P:96,87C:ANB', 'P:95,93C:GSU', 'P:100,57C:XCL', 'P:16,89C:JFG', 'P:100,76C:XQO', 'P:12,10C:MXX', 'P:85,92C:RHY', 'P:22,5C:IPX', 'P:8,12C:XNX', 'P:98,98C:KIN'];
 
-function solveProblem({{.ChallengeParams}}) {
-    return "";
+
+function solveProblem(islandX, islandY, planes) {
+    return planes.map(e=>e.split("C:"))
+    .map(e => );
 }
 
-console.log(`Answer: '${solveProblem({{.ChallengeParams}})}'`);
+console.log(`Answer: '${solveProblem(islandX, islandY, planes)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
-    {{.ChallengeDemoSteps}}
+    // STEPS
+	// [1/3] L'avion NEP se trouve à une distance de 37.48 de l'île.
+	// [2/3] L'avion BQC se trouve à une distance de 48.1 de l'île.
+	// [3/3] L'avion YWG se trouve à une distance de 50.49 de l'île.
 
-    {{.ChallengeTestVariables}}
-    const expected = {{.ChallengeTestExpectedValue}}
 
-    const result = solveProblem({{.ChallengeParams}});
+    const islandX = 59;
+const islandY = 59;
+const planes = ['P:86,33C:NEP', 'P:40,7C:GFR', 'P:94,92C:BQC', 'P:16,92C:EQW', 'P:52,9C:YWG', 'P:0,87C:MFX', 'P:99,93C:PXC'];
+
+    const expected = 'NEPBQCYWG'
+
+    const result = solveProblem(islandX, islandY, planes);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit {{.ChallengeCode}}')
+        console.log('Run the following command to submit:\ntainix submit SURVIVAL_1')
     }
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
@@ -31,7 +42,7 @@ function test() {
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '{{.ChallengeToken}}'"
+        "CHALLENGE_TOKEN: 'd91d5c4ae6c70cba6f8dc9c780a963584fc1f5d259ccf446d0aa3a432d8ba2afeb0230a5e27ddde9'"
     );
 
     /**
@@ -64,11 +75,7 @@ function init() {
     Object.prototype.toSortedDescList = function () {
         return dictionnaryToSortedDescArray(this);
     };
-
-    Object.prototype.toEntries = function () {
-      return Object.entries(this)
-    }
-
+    
     Array.prototype.arrayOfPairToDict = function () {
       return arrayOfPairToDict(this);
     };

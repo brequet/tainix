@@ -2,85 +2,65 @@ init();
 test();
 
 // Challenge variables
-const types = [
-  "Feu",
-  "Herbe",
-  "Eau",
-  "Feu",
-  "Eau",
-  "Eau",
-  "Herbe",
-  "Herbe",
-  "Psychique",
-  "Eau",
-  "Eau",
-  "Feu",
-  "Insecte",
-  "Feu",
-  "Feu",
-  "Herbe",
-  "Psychique",
-  "Herbe",
-  "Herbe",
-  "Herbe",
-  "Eau",
-  "Herbe",
-  "Feu",
-  "Air",
-  "Poison",
-  "Glace",
-  "Eau",
-  "Insecte",
-  "Herbe",
-  "Air",
-  "Eau",
+const keys = [7, 25];
+const words = [
+  "coffrait",
+  "usinasse",
+  "empese",
+  "diffamai",
+  "complexe",
+  "miterais",
+  "galbasse",
+  "retracer",
+  "imprimai",
 ];
 
-function solveProblem(types) {
-  let baseCounter = 0;
-  "Feu" in types && baseCounter++;
-  "Herbe" in types && baseCounter++;
-  "Eau" in types && baseCounter++;
-  return baseCounter;
+function solveProblem(keys, words) {
+  function toPassword(txt) {
+    return txt
+      .split("")
+      .map((c) =>
+        String.fromCharCode(
+          97 + (((c.charCodeAt(0) - 97) * keys[0] + keys[1]) % 26)
+        )
+      )
+      .join("");
+  }
+  return words.map((w) => toPassword(w)).join("-");
 }
 
-console.log(`Answer: '${solveProblem(types)}'`);
+console.log(`Answer: '${solveProblem(keys, words)}'`);
 
 function test() {
   console.log("-".repeat(15) + " Start Test " + "-".repeat(15));
 
   // STEPS
-  // [1/2] Je peux faire 2 équipes de Pokemons de base.
-  // [2/2] J'ai à disposition 2 Pokemons rares.
+  // [1/6] caries => vjufhn
+  // [2/6] grisante => tufnjwgh
+  // [3/6] voilures => spfkzuhn
+  // [4/6] nudismes => wzofndhn
+  // [5/6] tiendrez => gfhwouhq
+  // [6/6] ponction => ipwvgfpw
 
-  const types = [
-    "Eau",
-    "Herbe",
-    "Herbe",
-    "Herbe",
-    "Eau",
-    "Herbe",
-    "Eau",
-    "Eau",
-    "Air",
-    "Feu",
-    "Herbe",
-    "Herbe",
-    "Eau",
-    "Eau",
-    "Psychique",
-    "Feu",
+  const words = [
+    "caries",
+    "grisante",
+    "voilures",
+    "nudismes",
+    "tiendrez",
+    "ponction",
   ];
+  const keys = [19, 9];
 
-  const expected = "2";
+  const expected = "vjufhn-tufnjwgh-spfkzuhn-wzofndhn-gfhwouhq-ipwvgfpw";
 
-  const result = solveProblem(types);
+  const result = solveProblem(keys, words);
   if (result != expected) {
     console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
   } else {
     console.log(`Test passed ! Got the expected result: ${expected}`);
     console.log(
-      "Run the following command to submit:\ntainix submit POKEMON_1"
+      "Run the following command to submit:\ntainix submit SECURITY_2"
     );
   }
 
@@ -89,7 +69,7 @@ function test() {
 
 function init() {
   console.log(
-    "CHALLENGE_TOKEN: 'b0f79dfff3dc1b59d5040a7d24ad2e3f20e9d9631cae7ff2ae51c2a1d16e54dbc7b1b2a0144338be'"
+    "CHALLENGE_TOKEN: '5ff730b50ce3c5aac1479a9c9a3ea312466f971fd44b32ecd6389c8e4849dc9d0b87103aa81c8052'"
   );
 
   /**

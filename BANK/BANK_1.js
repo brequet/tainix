@@ -2,86 +2,48 @@ init();
 test();
 
 // Challenge variables
-const types = [
-  "Feu",
-  "Herbe",
-  "Eau",
-  "Feu",
-  "Eau",
-  "Eau",
-  "Herbe",
-  "Herbe",
-  "Psychique",
-  "Eau",
-  "Eau",
-  "Feu",
-  "Insecte",
-  "Feu",
-  "Feu",
-  "Herbe",
-  "Psychique",
-  "Herbe",
-  "Herbe",
-  "Herbe",
-  "Eau",
-  "Herbe",
-  "Feu",
-  "Air",
-  "Poison",
-  "Glace",
-  "Eau",
-  "Insecte",
-  "Herbe",
-  "Air",
-  "Eau",
-];
+const time = 273;
+const actions = "BBBBBBBBBBBBBBBBIIIIIIIIIIIIIMMMMMMMMMMMMMMMMEEEEEEEEEEEE";
+const references = "B:6 I:3 M:2 E:9";
 
-function solveProblem(types) {
-  let baseCounter = 0;
-  "Feu" in types && baseCounter++;
-  "Herbe" in types && baseCounter++;
-  "Eau" in types && baseCounter++;
-  return baseCounter;
+function solveProblem(time, actions, references) {
+  const refs = references
+    .split(" ")
+    .map((pair) => pair.split(":"))
+    .arrayOfPairToDict();
+  let res = actions
+    .toDictOfCharOccurrences()
+    .toEntries()
+    .map((e) => refs[e[0]] * e[1])
+    .sumUp();
+  return res < time ? `ESCAPE${time - res}` : `PRISON${res - time}`;
 }
 
-console.log(`Answer: '${solveProblem(types)}'`);
+console.log(`Answer: '${solveProblem(time, actions, references)}'`);
 
 function test() {
   console.log("-".repeat(15) + " Start Test " + "-".repeat(15));
 
   // STEPS
-  // [1/2] Je peux faire 2 équipes de Pokemons de base.
-  // [2/2] J'ai à disposition 2 Pokemons rares.
+  // [1/6] Il faut 56 de temps pour les actions "Break".
+  // [2/6] Il faut 64 de temps pour les actions "IT".
+  // [3/6] Il faut 18 de temps pour les actions "Money".
+  // [4/6] Il faut 64 de temps pour les actions "Prepare".
+  // [5/6] Ils ont donc besoin de 202 de temps et la police arrive dans 227.
+  // [6/6] Ils peuvent s'échapper ! Il leur restait 25 de temps.
 
-  const types = [
-    "Eau",
-    "Herbe",
-    "Herbe",
-    "Herbe",
-    "Eau",
-    "Herbe",
-    "Eau",
-    "Eau",
-    "Air",
-    "Feu",
-    "Herbe",
-    "Herbe",
-    "Eau",
-    "Eau",
-    "Psychique",
-    "Feu",
-  ];
+  const time = 227;
+  const actions = "BBBBBBBBIIIIIIIIMMMMMMMMMEEEEEEEE";
+  const references = "B:7 I:8 M:2 E:8";
 
-  const expected = "2";
+  const expected = "ESCAPE25";
 
-  const result = solveProblem(types);
+  const result = solveProblem(time, actions, references);
   if (result != expected) {
     console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
   } else {
     console.log(`Test passed ! Got the expected result: ${expected}`);
-    console.log(
-      "Run the following command to submit:\ntainix submit POKEMON_1"
-    );
+    console.log("Run the following command to submit:\ntainix submit BANK_1");
   }
 
   console.log("-".repeat(15) + " End Test " + "-".repeat(15));
@@ -89,7 +51,7 @@ function test() {
 
 function init() {
   console.log(
-    "CHALLENGE_TOKEN: 'b0f79dfff3dc1b59d5040a7d24ad2e3f20e9d9631cae7ff2ae51c2a1d16e54dbc7b1b2a0144338be'"
+    "CHALLENGE_TOKEN: '74784f257ac6188f468872d395c8a8bcb2b96af488d071d8abf803f5d2ee677b2c9d3130c53e1a4f'"
   );
 
   /**
@@ -121,6 +83,14 @@ function init() {
 
   Object.prototype.toSortedDescList = function () {
     return dictionnaryToSortedDescArray(this);
+  };
+
+  Object.prototype.toEntries = function () {
+    return Object.entries(this);
+  };
+
+  Array.prototype.arrayOfPairToDict = function () {
+    return arrayOfPairToDict(this);
   };
 
   String.prototype.toDictOfCharOccurrences = function () {
@@ -157,4 +127,13 @@ function dictionnaryToSortedDescArray(dict) {
 
 function validateAccForKey(acc, key) {
   if (!(key in acc)) acc[key] = 0;
+}
+
+function arrayOfPairToDict(arrayOfPairs) {
+  const dict = {};
+  arrayOfPairs.forEach((pair) => {
+    const [key, value] = pair;
+    dict[key] = value;
+  });
+  return dict;
 }
