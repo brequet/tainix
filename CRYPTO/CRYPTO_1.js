@@ -2,36 +2,43 @@ init();
 test();
 
 // Challenge variables
-const points = 'NNDDDNDNNNNDDDNDDNDDDNNDDDDNDNDNNNDDDDDDDNNDDDDDNDNNDDDDDDDNNDNNDNDNNNDDDNNDNDNNDNDNDDNDDNDNDDNDDNDDDDDNDND';
+const words = ['YQOUISKOCL', 'WUMMRSKEXC', 'WBMARYAELC', 'PBMSYSDELC', 'WMVDRSKELC', 'KBMDRPKPVM', 'WBLWIDIECN', 'LBMDCSGEDC', 'WBMDRSOELC', 'BBBDRCZELP', 'JIXDCEOKVC', 'LBTDRSVELC', 'WNMDREGELC', 'KBVDRSKEHC', 'YGMDUBKELC', 'WPMDRSFEYC', 'UBVDRSKTLE', 'WBYDDSGGLV', 'IIMDSKGKLC', 'WBMQYSWELC', 'JBTDATKELC', 'UBFBYSKELC', 'WBSURSGELB', 'GBHDRSKKPX', 'MBCPRSKQLC', 'EBMZPPYELC', 'LQXDGTHECS', 'WHWDITSFVC', 'WBMMXYKDQC', 'JNYJWMKDWC', 'WIMDRXPKLC', 'WTMAVSKQLC', 'WSMDRDJELC', 'YBXDYIKEVC', 'WBTHGSMVLC', 'WBMDXSLILB', 'MGRDLSKCLC', 'HBRDRSTELC', 'VHGORDKEWC', 'QBMURSKFZZ'];
 
 
-function solveProblem(points) {
-    return "";
+function solveProblem(words) {
+    let v = Array(words[0].length).fill("")
+    for (let j = 0; j < words[0].length; j++) {
+        for (let i = 0; i < words.length; i++) {
+            v[j] += words[i][j]
+        }
+    }
+    return v.map(e => stringToDictOfCharOccurrences(e).toSortedDescList()[0][0])
+        .log()
+        .join("")
 }
 
-console.log(`Answer: '${solveProblem(points)}'`);
+console.log(`Answer: '${solveProblem(words)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
     // STEPS
-	// [1/5] Le joueur N gagne le JEU, il y a 0:1
-	// [2/5] Le joueur N gagne le JEU, il y a 0:2
-	// [3/5] Le joueur N gagne le JEU, il y a 0:3
-	// [4/5] Le joueur D gagne le JEU, il y a 1:3
-	// [5/5] Le joueur D gagne le JEU, il y a 2:3
+    // [1/4] La lettre à la position 0 qui revient le + souvent est la lettre : V
+    // [2/4] La lettre à la position 1 qui revient le + souvent est la lettre : R
+    // [3/4] La lettre à la position 2 qui revient le + souvent est la lettre : Y
+    // [4/4] La lettre à la position 3 qui revient le + souvent est la lettre : U
 
 
-    const points = 'NNDDNNNNNNNNNNDNDDNDNDDDDDDN';
+    const words = ['BCFU', 'GRYG', 'LRMF', 'VLYP', 'DRYO', 'SCYU', 'VRZY', 'NAFU', 'IQYB', 'TBTS'];
 
-    const expected = '2:3:30:15'
+    const expected = 'VRYU'
 
-    const result = solveProblem(points);
+    const result = solveProblem(words);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit TENNIS_1')
+        console.log('Run the following command to submit:\ntainix submit CRYPTO_1')
     }
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
@@ -39,7 +46,7 @@ function test() {
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '5d6d975581c13088109e8c5c4f2a388b50078abd62685cd558168185fe257e786da47d5a2ae78bf0'"
+        "CHALLENGE_TOKEN: '6199998129b2116ea247bcea4cdac73ecff6c3baaa9d991a45bab0479afc618d15a3f808eb12a2ae'"
     );
 
     /**
