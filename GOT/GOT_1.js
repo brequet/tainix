@@ -2,28 +2,37 @@ init();
 test();
 
 // Challenge variables
-{{.ChallengeVariables }}
+const armee = 6171;
 
-function solveProblem({{.ChallengeParams}}) {
-    return "";
+
+function solveProblem(armee) {
+    let dragonCount = Math.trunc(armee / (3 * 1000))
+    let dothrakiCount = Math.min(200, Math.trunc(((armee - dragonCount * 1000) / 2) / (15)))
+    let rest = armee - dragonCount * 1000 - dothrakiCount * 15
+    return `${dragonCount}_${dothrakiCount}_${rest}`;
 }
 
-console.log(`Answer: '${solveProblem({{.ChallengeParams}})}'`);
+console.log(`Answer: '${solveProblem(armee)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
-    {{.ChallengeDemoSteps}}
+    // STEPS
+    // [1/3] Daenerys fait appel à 2 dragon(s) pour combattre 2000 vilains tout moches. Il reste 6194 vilains tout moches à combattre.
+    // [2/3] Daenerys convoque 200 immaculé(s) pour combattre 3000 vilains tout hideux. Il reste 3194 vilains tout hideux à combattre.
+    // [3/3] Daenerys sollicite 3194 dothraki(s) pour combattre 3194 vilains tout laids. Il ne reste plus personne à combattre ! VICTOIRE !
 
-    {{.ChallengeTestVariables}}
-    const expected = {{.ChallengeTestExpectedValue}}
 
-    const result = solveProblem({{.ChallengeParams}});
+    const armee = 6168;
+
+    const expected = '2_138_2098'
+
+    const result = solveProblem(armee);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit {{.ChallengeCode}}')
+        console.log('Run the following command to submit:\ntainix submit GOT_1')
     }
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
@@ -31,7 +40,7 @@ function test() {
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '{{.ChallengeToken}}'"
+        "CHALLENGE_TOKEN: 'c8a42015406c16f2c3643eb1af024d1f03da897fe5f18456cea607ca776c2fbc33a8fab89ef69760'"
     );
 
     /**
@@ -55,16 +64,6 @@ function init() {
         return this.sort((a, b) => b - a);
     };
 
-    Object.prototype.log = function (arrName = null) {
-        if (arrName == null) console.log("Logging:", this);
-        else console.log(`Logging ${arrName}:`, this);
-        return this;
-    };
-
-    Object.prototype.toSortedDescList = function () {
-        return dictionnaryToSortedDescArray(this);
-    };
-
     cl = console.log
 }
 
@@ -78,21 +77,4 @@ function stringToDictOfCharOccurrences(str) {
         acc[cur]++;
         return acc;
     }, {});
-}
-
-function dictionnaryToSortedDescArray(dict) {
-    var items = Object.keys(dict).map(function (key) {
-        return [key, dict[key]];
-    });
-
-    // Sort the array based on the second element
-    items.sort(function (first, second) {
-        return second[1] - first[1];
-    });
-
-    return items
-}
-
-function validateAccForKey(acc, key) {
-    if (!(key in acc)) acc[key] = 0;
 }

@@ -6,11 +6,14 @@ const ennemis = ['x:32 pv:106', 'x:36 pv:72', 'x:14 pv:24', 'x:8 pv:23', 'x:17 p
 
 
 function solveProblem(ennemis) {
-    ennemis.map(e => e.split(" "))
-        .map(e => { return { x: e[0].split(":")[1], pv: e[1].split(":")[1] } })
+    const sorted = ennemis.map(e => e.split(" "))
+        .map(e => { return { x: Number(e[0].split(":")[1]), pv: Number(e[1].split(":")[1]) } })
         .sort((a, b) => a.x - b.x)
-        .log()
-    return "";
+    return sorted.map((e, i) => {
+        dx = i === 0 ? e.x : e.x - sorted[i - 1].x
+        return 'D'.repeat(dx) + 'F'.repeat(Math.ceil(e.pv / 10))
+    })
+        .join("")
 }
 
 console.log(`Answer: '${solveProblem(ennemis)}'`);

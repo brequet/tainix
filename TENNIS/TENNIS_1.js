@@ -2,28 +2,36 @@ init();
 test();
 
 // Challenge variables
-{{.ChallengeVariables }}
+const points = 'NDDDNNDNNDDDNDDDNDDDNDDNNDNNNDDNDNNDNNDNNDDNDDDNNDDDDDNNNDNNDDDNNDDDNDNDNDDNDDDDNDDDDNNDDNNDNDNDDNDDDNNDNNNNNDDDDDNNDNDDNDNNNNDNDDDDNNDNNDN';
 
-function solveProblem({{.ChallengeParams}}) {
+
+function solveProblem(points) {
     return "";
 }
 
-console.log(`Answer: '${solveProblem({{.ChallengeParams}})}'`);
+console.log(`Answer: '${solveProblem(points)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
-    {{.ChallengeDemoSteps}}
+    // STEPS
+	// [1/5] Le joueur D gagne le JEU, il y a 1:0
+	// [2/5] Le joueur D gagne le JEU, il y a 2:0
+	// [3/5] Le joueur N gagne le JEU, il y a 2:1
+	// [4/5] Le joueur D gagne le JEU, il y a 3:1
+	// [5/5] Le joueur D gagne le JEU, il y a 4:1
 
-    {{.ChallengeTestVariables}}
-    const expected = {{.ChallengeTestExpectedValue}}
 
-    const result = solveProblem({{.ChallengeParams}});
+    const points = 'DDNNDDDNDDDNDNDNNDDNDDDDDDDNNND';
+
+    const expected = '4:1:30:40'
+
+    const result = solveProblem(points);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit {{.ChallengeCode}}')
+        console.log('Run the following command to submit:\ntainix submit TENNIS_1')
     }
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
@@ -31,7 +39,7 @@ function test() {
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '{{.ChallengeToken}}'"
+        "CHALLENGE_TOKEN: '979cbe238f091f4eff44c959fa382c23dbb9dde64d2cd28ec99118eaa96418519e50b355db9b5d73'"
     );
 
     /**

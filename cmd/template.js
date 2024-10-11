@@ -37,3 +37,20 @@ function stringToDictOfCharOccurrences(str) {
     return acc;
   }, {});
 }
+
+function dictionnaryToSortedDescArray(dict) {
+  var items = Object.keys(dict).map(function (key) {
+    return [key, dict[key]];
+  });
+
+  // Sort the array based on the second element
+  items.sort(function (first, second) {
+    return second[1] - first[1];
+  });
+
+  return items
+}
+
+function validateAccForKey(acc, key) {
+  if (!(key in acc)) acc[key] = 0;
+}

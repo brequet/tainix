@@ -16,7 +16,7 @@ import (
 
 func generateCommand() *cobra.Command {
 	startCmd := &cobra.Command{
-		Use:   "g <CHALLENGE_NAME>",
+		Use:   "g <CHALLENGE_NAME | CHLALENGE_URL>",
 		Short: "generate a new challenge",
 		Args:  cobra.ExactArgs(1),
 		Run:   runGenerateCommand,
@@ -30,6 +30,10 @@ func runGenerateCommand(cmd *cobra.Command, args []string) {
 	if challengeName == "" {
 		fmt.Println("Challenge name is required")
 		os.Exit(1)
+	}
+	if strings.Contains(challengeName, "/") {
+		arr := strings.Split(challengeName, "/")
+		challengeName = arr[len(arr)-1]
 	}
 
 	challengeData, err := getChallengeData(challengeName)
