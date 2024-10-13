@@ -2,28 +2,44 @@ init();
 test();
 
 // Challenge variables
-{{.ChallengeVariables }}
+const waves = ['DASSASDSSS', 'DADADDASAAB', 'AAABAAABDD', 'DBAABBSDSDBB', 'BSADBDSASASABS', 'DABBBDSABBS', 'BDBSBDSBBSDD', 'ADDBSDAADADB', 'DAABDDASDDAB', 'ABDSSADDSA', 'BBDSBBABDSS', 'BAADAASDSADB', 'DSADSBBSBAAS', 'ASDSDBABBDSAD', 'DDSBAADDDADS', 'BDDBABDBAAD', 'ASBABDSDDAA', 'SASASADBDB', 'DDDDBSDDDDDA', 'DSBABAABBBBS', 'SDDABBBAASBAAS', 'ASSDDSASDDA'];
 
-function solveProblem({{.ChallengeParams}}) {
-    return "";
+
+function solveProblem(waves) {
+    return waves.map(wave => {
+        let { A, D, S, B } = wave.toDictOfCharOccurrences()
+        let bonus = wave.match(/[A]{2,}|[B]{2,}/g)?.map(e => parseInt(e.length) - 1)?.sumUp() ?? 0
+        cl(wave, bonus, A, D, S, B)
+        return parseInt(A ?? 0) * 5 + parseInt(D ?? 0) * 3 + parseInt(S ?? 0) * 2 + parseInt(B ?? 0) * 8 + bonus
+    })
+        .max()
 }
 
-console.log(`Answer: '${solveProblem({{.ChallengeParams}})}'`);
+console.log(`Answer: '${solveProblem(waves)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
-    {{.ChallengeDemoSteps}}
+    // STEPS
+    // [1/7] Puissance de la vague DSASDDDDBBS : 42 +1
+    // [2/7] Puissance de la vague DDBBDBSBADBS : 61 +1
+    // [3/7] Puissance de la vague ASABSADSDAB : 48
+    // [4/7] Puissance de la vague ABBSBDBADBS : 60 +1
+    // [5/7] Puissance de la vague BDBSABSADAAAS : 61 +2
+    // [6/7] Puissance de la vague AAAABBDSSBDS : 56 +4
+    // [7/7] Puissance de la vague SBDASSSBSS : 36
 
-    {{.ChallengeTestVariables}}
-    const expected = {{.ChallengeTestExpectedValue}}
 
-    const result = solveProblem({{.ChallengeParams}});
+    const waves = ['DSASDDDDBBS', 'DDBBDBSBADBS', 'ASABSADSDAB', 'ABBSBDBADBS', 'BDBSABSADAAAS', 'AAAABBDSSBDS', 'SBDASSSBSS'];
+
+    const expected = '63'
+
+    const result = solveProblem(waves);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit {{.ChallengeCode}}')
+        console.log('Run the following command to submit:\ntainix submit INVASION_1')
     }
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
@@ -31,7 +47,7 @@ function test() {
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '{{.ChallengeToken}}'"
+        "CHALLENGE_TOKEN: 'b826dada2775705b3d335957f31701b5cb1068a098e9e3d4d71ff9a4e046f0222549e7f75d15fd13'"
     );
 
     /**
@@ -70,11 +86,11 @@ function init() {
     };
 
     Object.prototype.toEntries = function () {
-      return Object.entries(this)
+        return Object.entries(this)
     }
 
     Array.prototype.arrayOfPairToDict = function () {
-      return arrayOfPairToDict(this);
+        return arrayOfPairToDict(this);
     };
 
     String.prototype.toDictOfCharOccurrences = function (splitter = "") {
@@ -123,9 +139,5 @@ function arrayOfPairToDict(arrayOfPairs) {
 }
 
 function roundToTwo(num) {
-    return +(Math.round(num + "e+2")  + "e-2");
-}
-
-function isNumeric(str){
-    return /^\d+$/.test(str);
+    return +(Math.round(num + "e+2") + "e-2");
 }

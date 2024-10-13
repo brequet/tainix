@@ -2,28 +2,52 @@ init();
 test();
 
 // Challenge variables
-{{.ChallengeVariables }}
+const spells = ['Colalimaflifli', 'Sonokedatrummobi', 'Desboumwadiboumvra', 'Zyricorpubadalima', 'Oqudiyocialima', 'Firiboumfixiowadi', 'Cracorpuboumboumbada', 'Colokoulamamobikeda', 'Endoveraylegratrummobi', 'Craviofinitara', 'Serlegrakoufixio', 'Feralegramusivra', 'Aloviofiaciabada', 'Desproboumpro', 'Ivaviokoufinitum', 'Colofliboumciabada'];
 
-function solveProblem({{.ChallengeParams}}) {
-    return "";
+
+function solveProblem(spells) {
+    return spells.map(spell =>
+        spell.split('').reduce((acc, cur) => {
+            if ('aeyuio'.includes(cur.toLowerCase())) {
+                acc['v']++;
+            } else {
+                acc['c']++;
+            }
+            return acc;
+        }, { c: 0, v: 0, word: spell }))
+        .map(s => {
+            res = 'aeyuio'.includes(s.word[0].toLowerCase()) ? 10 : 0
+            if (s.c > s.v) res += 5
+            if (s.c == s.v) res += 10
+            if (s.c < s.v) res += 15
+            return res
+        }).sumUp()
+
 }
 
-console.log(`Answer: '${solveProblem({{.ChallengeParams}})}'`);
+console.log(`Answer: '${solveProblem(spells)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
-    {{.ChallengeDemoSteps}}
+    // STEPS
+    // [1/5] Le sort Ivafinikedafixiovra vaut 25 pts.
+    // [2/5] Le sort Ivawadibadamusfixio vaut 25 pts.
+    // [3/5] Le sort Ulucuriwadifixiodina vaut 25 pts.
+    // [4/5] Le sort Endocorpumotolimatrum vaut 15 pts.
+    // [5/5] Le sort Serviocuriboum vaut 10 pts.
 
-    {{.ChallengeTestVariables}}
-    const expected = {{.ChallengeTestExpectedValue}}
 
-    const result = solveProblem({{.ChallengeParams}});
+    const spells = ['Ivafinikedafixiovra', 'Ivawadibadamusfixio', 'Ulucuriwadifixiodina', 'Endocorpumotolimatrum', 'Serviocuriboum'];
+
+    const expected = '100'
+
+    const result = solveProblem(spells);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit {{.ChallengeCode}}')
+        console.log('Run the following command to submit:\ntainix submit HARRY_POTTER_2')
     }
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
@@ -31,7 +55,7 @@ function test() {
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '{{.ChallengeToken}}'"
+        "CHALLENGE_TOKEN: 'ad4355f7568b21cb3bda2885689a22eceeb7a873d422f1208a5dc7bef48d7c3bc4927e1e7b1b9958'"
     );
 
     /**
@@ -55,10 +79,6 @@ function init() {
         return this.sort((a, b) => b - a);
     };
 
-    Array.prototype.max = function () {
-        return this.sortDesc()[0]
-    }
-
     Object.prototype.log = function (arrName = null) {
         if (arrName == null) console.log("Logging:", this);
         else console.log(`Logging ${arrName}:`, this);
@@ -70,11 +90,11 @@ function init() {
     };
 
     Object.prototype.toEntries = function () {
-      return Object.entries(this)
+        return Object.entries(this)
     }
 
     Array.prototype.arrayOfPairToDict = function () {
-      return arrayOfPairToDict(this);
+        return arrayOfPairToDict(this);
     };
 
     String.prototype.toDictOfCharOccurrences = function (splitter = "") {
@@ -120,12 +140,4 @@ function arrayOfPairToDict(arrayOfPairs) {
         dict[key] = value;
     });
     return dict;
-}
-
-function roundToTwo(num) {
-    return +(Math.round(num + "e+2")  + "e-2");
-}
-
-function isNumeric(str){
-    return /^\d+$/.test(str);
 }

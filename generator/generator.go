@@ -80,6 +80,22 @@ func GenerateVariablesDeclaration(params map[string]interface{}) string {
 				}
 			}
 			inputVars.WriteString("];\n")
+		case map[string]interface{}:
+			inputVars.WriteString(fmt.Sprintf("const %s = {", key))
+			first := true
+			for k, v := range v {
+				if !first {
+					inputVars.WriteString(", ")
+				}
+				first = false
+				switch e := v.(type) {
+				case string:
+					inputVars.WriteString(fmt.Sprintf("'%s': '%v'", k, e))
+				default:
+					inputVars.WriteString(fmt.Sprintf("'%s': %v", k, e))
+				}
+			}
+			inputVars.WriteString("};\n")
 		default:
 			inputVars.WriteString(fmt.Sprintf("const %s = %v;\n", key, v))
 		}

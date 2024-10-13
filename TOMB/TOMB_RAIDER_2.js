@@ -2,28 +2,56 @@ init();
 test();
 
 // Challenge variables
-{{.ChallengeVariables }}
+const words = ['saccules', 'binaires', 'exondiez'];
+const translations = { 'saccules': 'ztddfxnz', 'binaires': 'ukwtkpnz', 'exondiez': 'nomwhkne' };
+const secret = 'hndkht';
 
-function solveProblem({{.ChallengeParams}}) {
-    return "";
+
+function solveProblem(words, translations, secret) {
+    let letterMap = {}
+    translations.toEntries().log().forEach(pair => {
+        [value, key] = pair
+        for (let i = 0; i < value.length; i++) {
+            letterMap[key[i]] = value[i]
+        }
+    })
+    letterMap.log()
+    return secret.split("").map(c => letterMap[c]).join("")
 }
-
-console.log(`Answer: '${solveProblem({{.ChallengeParams}})}'`);
+console.log(`Answer: '${solveProblem(words, translations, secret)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
-    {{.ChallengeDemoSteps}}
+    // STEPS
+    // [1/14] Le mot à traduire est: nrcnzn
+    // [2/14] La lettre "c", veut dire: "p"
+    // [3/14] La lettre "f", veut dire: "u"
+    // [4/14] La lettre "x", veut dire: "l"
+    // [5/14] La lettre "z", veut dire: "s"
+    // [6/14] La lettre "k", veut dire: "i"
+    // [7/14] La lettre "m", veut dire: "o"
+    // [8/14] La lettre "w", veut dire: "n"
+    // [9/14] La lettre "t", veut dire: "a"
+    // [10/14] La lettre "d", veut dire: "c"
+    // [11/14] La lettre "r", veut dire: "m"
+    // [12/14] La lettre "n", veut dire: "e"
+    // [13/14] La lettre "o", veut dire: "x"
+    // [14/14] nrcnzn veut dire: empese
 
-    {{.ChallengeTestVariables}}
-    const expected = {{.ChallengeTestExpectedValue}}
 
-    const result = solveProblem({{.ChallengeParams}});
+    const words = ['pulsions', 'accusais', 'complexe'];
+    const translations = { 'pulsions': 'cfxzkmwz', 'accusais': 'tddfztkz', 'complexe': 'dmrcxnon' };
+    const secret = 'nrcnzn';
+
+    const expected = 'empese'
+
+    const result = solveProblem(words, translations, secret);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit {{.ChallengeCode}}')
+        console.log('Run the following command to submit:\ntainix submit TOMB_RAIDER_2')
     }
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
@@ -31,7 +59,7 @@ function test() {
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '{{.ChallengeToken}}'"
+        "CHALLENGE_TOKEN: '8df5df667eca9a254e58fee8a246d1e0da83633897efad7910dc69b0e9de8a6e57367f7e9c80a51a'"
     );
 
     /**
@@ -55,10 +83,6 @@ function init() {
         return this.sort((a, b) => b - a);
     };
 
-    Array.prototype.max = function () {
-        return this.sortDesc()[0]
-    }
-
     Object.prototype.log = function (arrName = null) {
         if (arrName == null) console.log("Logging:", this);
         else console.log(`Logging ${arrName}:`, this);
@@ -70,11 +94,11 @@ function init() {
     };
 
     Object.prototype.toEntries = function () {
-      return Object.entries(this)
+        return Object.entries(this)
     }
 
     Array.prototype.arrayOfPairToDict = function () {
-      return arrayOfPairToDict(this);
+        return arrayOfPairToDict(this);
     };
 
     String.prototype.toDictOfCharOccurrences = function (splitter = "") {
@@ -120,12 +144,4 @@ function arrayOfPairToDict(arrayOfPairs) {
         dict[key] = value;
     });
     return dict;
-}
-
-function roundToTwo(num) {
-    return +(Math.round(num + "e+2")  + "e-2");
-}
-
-function isNumeric(str){
-    return /^\d+$/.test(str);
 }

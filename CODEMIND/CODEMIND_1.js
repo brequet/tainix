@@ -2,28 +2,41 @@ init();
 test();
 
 // Challenge variables
-{{.ChallengeVariables }}
+const positives = ['Joie', 'Euphorie', 'Gratitude', 'Affection'];
+const negatives = ['Frustration', 'Culpabilité', 'Stress', 'Impatience'];
+const emotions = ['Joie', 'Frustration', 'Neutralité', 'Gratitude', 'Réalisme', 'Affection', 'Gratitude', 'Réalisme', 'Gratitude', 'Gratitude', 'Réalisme', 'Impatience', 'Concentration', 'Gratitude', 'Réalisme', 'Impatience', 'Réalisme', 'Joie', 'Concentration', 'Gratitude', 'Euphorie', 'Stress', 'Frustration'];
 
-function solveProblem({{.ChallengeParams}}) {
-    return "";
+
+function solveProblem(positives, negatives, emotions) {
+    return `${emotions.filter(e => positives.includes(e)).length}_${emotions.filter(e => negatives.includes(e)).length}`
 }
 
-console.log(`Answer: '${solveProblem({{.ChallengeParams}})}'`);
+console.log(`Answer: '${solveProblem(positives, negatives, emotions)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
-    {{.ChallengeDemoSteps}}
+    // STEPS
+    // [1/6] Optimisme est une émotion positive.
+    // [2/6] Dégoût est une émotion négative.
+    // [3/6] Indifférence est une émotion négative.
+    // [4/6] Dégoût est une émotion négative.
+    // [5/6] Indifférence est une émotion négative.
+    // [6/6] Dégoût est une émotion négative.
 
-    {{.ChallengeTestVariables}}
-    const expected = {{.ChallengeTestExpectedValue}}
 
-    const result = solveProblem({{.ChallengeParams}});
+    const positives = ['Optimisme', 'Espoir'];
+    const negatives = ['Dégoût', 'Indifférence'];
+    const emotions = ['Optimisme', 'Dégoût', 'Indifférence', 'Dégoût', 'Indifférence', 'Dégoût'];
+
+    const expected = '1_5'
+
+    const result = solveProblem(positives, negatives, emotions);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit {{.ChallengeCode}}')
+        console.log('Run the following command to submit:\ntainix submit CODEMIND_1')
     }
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
@@ -31,7 +44,7 @@ function test() {
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '{{.ChallengeToken}}'"
+        "CHALLENGE_TOKEN: '71be30bb0c8bfecb4d701835f0f05eb273ac34bf14803f8c7f253f039e6b068ab0f37eaca43e1fdd'"
     );
 
     /**
@@ -55,10 +68,6 @@ function init() {
         return this.sort((a, b) => b - a);
     };
 
-    Array.prototype.max = function () {
-        return this.sortDesc()[0]
-    }
-
     Object.prototype.log = function (arrName = null) {
         if (arrName == null) console.log("Logging:", this);
         else console.log(`Logging ${arrName}:`, this);
@@ -70,11 +79,11 @@ function init() {
     };
 
     Object.prototype.toEntries = function () {
-      return Object.entries(this)
+        return Object.entries(this)
     }
 
     Array.prototype.arrayOfPairToDict = function () {
-      return arrayOfPairToDict(this);
+        return arrayOfPairToDict(this);
     };
 
     String.prototype.toDictOfCharOccurrences = function (splitter = "") {
@@ -120,12 +129,4 @@ function arrayOfPairToDict(arrayOfPairs) {
         dict[key] = value;
     });
     return dict;
-}
-
-function roundToTwo(num) {
-    return +(Math.round(num + "e+2")  + "e-2");
-}
-
-function isNumeric(str){
-    return /^\d+$/.test(str);
 }

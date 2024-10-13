@@ -2,28 +2,48 @@ init();
 test();
 
 // Challenge variables
-{{.ChallengeVariables }}
+const actions = 'PDDPTETETDDEETDDETPPTETDDEDDPPPETP';
 
-function solveProblem({{.ChallengeParams}}) {
-    return "";
+
+function solveProblem(actions) {
+    p = {
+        E: 5,
+        T: 2,
+        P: 3,
+        D: 3
+    }
+    return actions.replaceAll(/([^E])T/g, "$1")
+        .toDictOfCharOccurrences()
+        .toEntries()
+        .map(e => p[e[0]] * e[1])
+        .sumUp()
 }
 
-console.log(`Answer: '${solveProblem({{.ChallengeParams}})}'`);
+console.log(`Answer: '${solveProblem(actions)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
-    {{.ChallengeDemoSteps}}
+    // STEPS
+    // [1/7] Essai ! Ton équipe marque 5 points !
+    // [2/7] Transformation ! Ton équipe marque 2 points !
+    // [3/7] On indique une transformation mais il n'y a pas eu d'essai avant, ça ne compte pas donc !
+    // [4/7] Pénalité ! Ton équipe marque 3 points !
+    // [5/7] Essai ! Ton équipe marque 5 points !
+    // [6/7] Essai ! Ton équipe marque 5 points !
+    // [7/7] Transformation ! Ton équipe marque 2 points !
 
-    {{.ChallengeTestVariables}}
-    const expected = {{.ChallengeTestExpectedValue}}
 
-    const result = solveProblem({{.ChallengeParams}});
+    const actions = 'ETTPEET';
+
+    const expected = '22'
+
+    const result = solveProblem(actions);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit {{.ChallengeCode}}')
+        console.log('Run the following command to submit:\ntainix submit RUGBY_2')
     }
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
@@ -31,7 +51,7 @@ function test() {
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '{{.ChallengeToken}}'"
+        "CHALLENGE_TOKEN: '52aa1ce806ccb57ce8be9807de685eee69fe4740b2d30f448eec7bc08bba17a7768f52bc10a5c46e'"
     );
 
     /**
@@ -55,10 +75,6 @@ function init() {
         return this.sort((a, b) => b - a);
     };
 
-    Array.prototype.max = function () {
-        return this.sortDesc()[0]
-    }
-
     Object.prototype.log = function (arrName = null) {
         if (arrName == null) console.log("Logging:", this);
         else console.log(`Logging ${arrName}:`, this);
@@ -70,11 +86,11 @@ function init() {
     };
 
     Object.prototype.toEntries = function () {
-      return Object.entries(this)
+        return Object.entries(this)
     }
 
     Array.prototype.arrayOfPairToDict = function () {
-      return arrayOfPairToDict(this);
+        return arrayOfPairToDict(this);
     };
 
     String.prototype.toDictOfCharOccurrences = function (splitter = "") {
@@ -120,12 +136,4 @@ function arrayOfPairToDict(arrayOfPairs) {
         dict[key] = value;
     });
     return dict;
-}
-
-function roundToTwo(num) {
-    return +(Math.round(num + "e+2")  + "e-2");
-}
-
-function isNumeric(str){
-    return /^\d+$/.test(str);
 }

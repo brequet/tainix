@@ -2,28 +2,41 @@ init();
 test();
 
 // Challenge variables
-{{.ChallengeVariables }}
+const waves = ['SBSBBSSBAADBASD', 'SSSDSADABDDBSS', 'AAASSBSBSBB', 'DSBDASDBABD', 'BAAAASSBDBBAD', 'DADDSSBSBB', 'BDAASSSSDA', 'BSSADAAADDBA', 'BDABSDABBBD', 'BSADADDSAB', 'BDBASSDDSSBB', 'SBSSBBBASDSA', 'DBASABDDBADDB', 'ADASSBBABD', 'DBDBASSABSBD', 'ABASASABSD', 'DSDDASADASAAA', 'BBADDDSBBSA', 'BSBADDSBBSBB', 'ADASAADBBABS', 'BSBDABDSBSAS', 'ASSDSSSAASS', 'BDBDABSBDD'];
 
-function solveProblem({{.ChallengeParams}}) {
-    return "";
+
+function solveProblem(waves) {
+    return waves.map(e => e.toDictOfCharOccurrences()['D'] ?? 0).sumUp();
 }
 
-console.log(`Answer: '${solveProblem({{.ChallengeParams}})}'`);
+console.log(`Answer: '${solveProblem(waves)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
-    {{.ChallengeDemoSteps}}
+    // STEPS
+    // [1/10] Il y a 4 défense(s) dans la vague DDBDDSBASAAS
+    // [2/10] Il y a 2 défense(s) dans la vague DBASDSBBSAAS
+    // [3/10] Il y a 4 défense(s) dans la vague DASBDSDASSABD
+    // [4/10] Il y a 1 défense(s) dans la vague SSBBSSDBSSSBBB
+    // [5/10] Il y a 5 défense(s) dans la vague SBBDADBBSDABDD
+    // [6/10] Il y a 3 défense(s) dans la vague DDBDABAASAA
+    // [7/10] Il y a 4 défense(s) dans la vague DDADSSSSDBS
+    // [8/10] Il y a 5 défense(s) dans la vague DSDBDAABDDASA
+    // [9/10] Il y a 4 défense(s) dans la vague DSBBAAADDBADB
+    // [10/10] Il y a 3 défense(s) dans la vague ABDSBADBASD
 
-    {{.ChallengeTestVariables}}
-    const expected = {{.ChallengeTestExpectedValue}}
 
-    const result = solveProblem({{.ChallengeParams}});
+    const waves = ['DDBDDSBASAAS', 'DBASDSBBSAAS', 'DASBDSDASSABD', 'SSBBSSDBSSSBBB', 'SBBDADBBSDABDD', 'DDBDABAASAA', 'DDADSSSSDBS', 'DSDBDAABDDASA', 'DSBBAAADDBADB', 'ABDSBADBASD'];
+
+    const expected = '35'
+
+    const result = solveProblem(waves);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit {{.ChallengeCode}}')
+        console.log('Run the following command to submit:\ntainix submit INVASION_0')
     }
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
@@ -31,7 +44,7 @@ function test() {
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '{{.ChallengeToken}}'"
+        "CHALLENGE_TOKEN: '627d9ae9a521ab82be46a34464c7c46060b01f04dd55e32e3bcf3228fbec9cc4f27917f2647060da'"
     );
 
     /**
@@ -70,11 +83,11 @@ function init() {
     };
 
     Object.prototype.toEntries = function () {
-      return Object.entries(this)
+        return Object.entries(this)
     }
 
     Array.prototype.arrayOfPairToDict = function () {
-      return arrayOfPairToDict(this);
+        return arrayOfPairToDict(this);
     };
 
     String.prototype.toDictOfCharOccurrences = function (splitter = "") {
@@ -120,12 +133,4 @@ function arrayOfPairToDict(arrayOfPairs) {
         dict[key] = value;
     });
     return dict;
-}
-
-function roundToTwo(num) {
-    return +(Math.round(num + "e+2")  + "e-2");
-}
-
-function isNumeric(str){
-    return /^\d+$/.test(str);
 }

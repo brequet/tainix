@@ -2,28 +2,52 @@ init();
 test();
 
 // Challenge variables
-{{.ChallengeVariables }}
+const ships = [395, 550, 7984, 3231, 6665, 2456, 7607, 5400, 125, 54, 33, 93, 106, 40, 8167, 88, 310, 478, 373, 19, 24, 7983, 278, 8747, 51, 334, 81, 3071, 8080, 152, 563, 9068, 59, 3896];
 
-function solveProblem({{.ChallengeParams}}) {
-    return "";
+
+function solveProblem(ships) {
+    return ships.map(ship => {
+        if (ship < 100) {
+            return Math.ceil(ship / 10)
+        } else if (ship < 1000) {
+            return 3 * Math.ceil(ship / 100) + 25
+        } else if (ship < 10000) {
+            return 5 * Math.ceil(ship / 1000) + 80
+        }
+    }).sumUp()
 }
 
-console.log(`Answer: '${solveProblem({{.ChallengeParams}})}'`);
+console.log(`Answer: '${solveProblem(ships)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
-    {{.ChallengeDemoSteps}}
+    // STEPS
+    // [1/13] Résistance du vaisseau : 7511. Puissance nécessaire : 120
+    // [2/13] Résistance du vaisseau : 73. Puissance nécessaire : 8
+    // [3/13] Résistance du vaisseau : 253. Puissance nécessaire : 34
+    // [4/13] Résistance du vaisseau : 1523. Puissance nécessaire : 90
+    // [5/13] Résistance du vaisseau : 88. Puissance nécessaire : 9
+    // [6/13] Résistance du vaisseau : 355. Puissance nécessaire : 37
+    // [7/13] Résistance du vaisseau : 922. Puissance nécessaire : 55
+    // [8/13] Résistance du vaisseau : 84. Puissance nécessaire : 9
+    // [9/13] Résistance du vaisseau : 68. Puissance nécessaire : 7
+    // [10/13] Résistance du vaisseau : 418. Puissance nécessaire : 40
+    // [11/13] Résistance du vaisseau : 77. Puissance nécessaire : 8
+    // [12/13] Résistance du vaisseau : 6956. Puissance nécessaire : 115
+    // [13/13] Résistance du vaisseau : 9240. Puissance nécessaire : 130
 
-    {{.ChallengeTestVariables}}
-    const expected = {{.ChallengeTestExpectedValue}}
 
-    const result = solveProblem({{.ChallengeParams}});
+    const ships = [7511, 73, 253, 1523, 88, 355, 922, 84, 68, 418, 77, 6956, 9240];
+
+    const expected = '662'
+
+    const result = solveProblem(ships);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit {{.ChallengeCode}}')
+        console.log('Run the following command to submit:\ntainix submit STARSHIP_1')
     }
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
@@ -31,7 +55,7 @@ function test() {
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '{{.ChallengeToken}}'"
+        "CHALLENGE_TOKEN: '8c3975a54f54405dd6f321b3f9b9824d5d8d593a46541105811832f7e6dfb47857da17a0bdf0e376'"
     );
 
     /**
@@ -55,10 +79,6 @@ function init() {
         return this.sort((a, b) => b - a);
     };
 
-    Array.prototype.max = function () {
-        return this.sortDesc()[0]
-    }
-
     Object.prototype.log = function (arrName = null) {
         if (arrName == null) console.log("Logging:", this);
         else console.log(`Logging ${arrName}:`, this);
@@ -70,15 +90,15 @@ function init() {
     };
 
     Object.prototype.toEntries = function () {
-      return Object.entries(this)
+        return Object.entries(this)
     }
 
     Array.prototype.arrayOfPairToDict = function () {
-      return arrayOfPairToDict(this);
+        return arrayOfPairToDict(this);
     };
 
-    String.prototype.toDictOfCharOccurrences = function (splitter = "") {
-        return stringToDictOfCharOccurrences(this, splitter);
+    String.prototype.toDictOfCharOccurrences = function () {
+        return stringToDictOfCharOccurrences(this);
     };
 
     cl = console.log
@@ -88,8 +108,8 @@ function init() {
  * Predefined utility functions
  */
 
-function stringToDictOfCharOccurrences(str, splitter = "") {
-    return str.split(splitter).reduce((acc, cur) => {
+function stringToDictOfCharOccurrences(str) {
+    return str.split("").reduce((acc, cur) => {
         if (!(cur in acc)) acc[cur] = 0;
         acc[cur]++;
         return acc;
@@ -120,12 +140,4 @@ function arrayOfPairToDict(arrayOfPairs) {
         dict[key] = value;
     });
     return dict;
-}
-
-function roundToTwo(num) {
-    return +(Math.round(num + "e+2")  + "e-2");
-}
-
-function isNumeric(str){
-    return /^\d+$/.test(str);
 }

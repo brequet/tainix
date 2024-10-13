@@ -2,28 +2,36 @@ init();
 test();
 
 // Challenge variables
-{{.ChallengeVariables }}
+const monsters = ['W', 'F', 'W', 'R', 'G', 'F', 'W', 'R', 'R', 'W', 'R', 'F', 'W', 'W', 'F', 'G', 'F', 'G', 'R', 'W', 'G', 'F', 'G', 'F', 'G', 'W', 'R', 'W', 'G', 'W', 'W', 'R'];
 
-function solveProblem({{.ChallengeParams}}) {
-    return "";
+
+function solveProblem(monsters) {
+    let { W, F, R, G } = monsters.join("").toDictOfCharOccurrences()
+    return Math.min(F, R) * Math.min(W, G) + ((W + F + R + G) - 2 * (Math.min(F, R) + Math.min(W, G)))
 }
 
-console.log(`Answer: '${solveProblem({{.ChallengeParams}})}'`);
+console.log(`Answer: '${solveProblem(monsters)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
-    {{.ChallengeDemoSteps}}
+    // STEPS
+    // [1/4] On peut faire 2 couple(s) entre les types Fruits et Rock.
+    // [2/4] Il reste 3 monstre(s) de type Fruits seul(s).
+    // [3/4] On peut faire 3 couple(s) entre les types Wood et Grass.
+    // [4/4] Il reste 2 monstre(s) de type Wood seul(s).
 
-    {{.ChallengeTestVariables}}
-    const expected = {{.ChallengeTestExpectedValue}}
 
-    const result = solveProblem({{.ChallengeParams}});
+    const monsters = ['W', 'F', 'F', 'R', 'F', 'G', 'F', 'W', 'W', 'R', 'W', 'F', 'G', 'G', 'W'];
+
+    const expected = '11'
+
+    const result = solveProblem(monsters);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit {{.ChallengeCode}}')
+        console.log('Run the following command to submit:\ntainix submit MONSTERS_4')
     }
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
@@ -31,7 +39,7 @@ function test() {
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '{{.ChallengeToken}}'"
+        "CHALLENGE_TOKEN: 'a75e649bc2281f695d86e0fd8a55f8a8935ad7ae803fcf472ffd8c2d8b436e98ef5046fdc823cd97'"
     );
 
     /**
@@ -55,10 +63,6 @@ function init() {
         return this.sort((a, b) => b - a);
     };
 
-    Array.prototype.max = function () {
-        return this.sortDesc()[0]
-    }
-
     Object.prototype.log = function (arrName = null) {
         if (arrName == null) console.log("Logging:", this);
         else console.log(`Logging ${arrName}:`, this);
@@ -70,11 +74,11 @@ function init() {
     };
 
     Object.prototype.toEntries = function () {
-      return Object.entries(this)
+        return Object.entries(this)
     }
 
     Array.prototype.arrayOfPairToDict = function () {
-      return arrayOfPairToDict(this);
+        return arrayOfPairToDict(this);
     };
 
     String.prototype.toDictOfCharOccurrences = function (splitter = "") {
@@ -120,12 +124,4 @@ function arrayOfPairToDict(arrayOfPairs) {
         dict[key] = value;
     });
     return dict;
-}
-
-function roundToTwo(num) {
-    return +(Math.round(num + "e+2")  + "e-2");
-}
-
-function isNumeric(str){
-    return /^\d+$/.test(str);
 }

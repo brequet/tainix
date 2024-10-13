@@ -2,28 +2,41 @@ init();
 test();
 
 // Challenge variables
-{{.ChallengeVariables }}
+const notes = [6, 9.5, 6.5, 9, 8.5, 8.5, 6.5, 3, 9.5];
+const difficulty = 4.3;
 
-function solveProblem({{.ChallengeParams}}) {
-    return "";
+
+function solveProblem(notes, difficulty) {
+    let ns = ((notes) => {
+        if (notes.length == 5) return notes.slice(1, 4)
+        if (notes.length == 7) return notes.slice(2, 5)
+        if (notes.length == 9) return notes.slice(3, 6)
+    })(notes.sortDesc()).log()
+    return (ns.sumUp() / 3 * difficulty).toFixed(2);
 }
 
-console.log(`Answer: '${solveProblem({{.ChallengeParams}})}'`);
+console.log(`Answer: '${solveProblem(notes, difficulty)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
-    {{.ChallengeDemoSteps}}
+    // STEPS
+    // [1/3] Il y a 5 notes, on enlève donc la plus basse et la plus haute.
+    // [2/3] Les notes retenues pour la moyenne sont : 7 - 7.5 - 8.5
+    // [3/3] On oublie pas de multiplier par le degré de difficulté !
 
-    {{.ChallengeTestVariables}}
-    const expected = {{.ChallengeTestExpectedValue}}
 
-    const result = solveProblem({{.ChallengeParams}});
+    const notes = [8.5, 7.5, 9.5, 7, 4];
+    const difficulty = 4.3;
+
+    const expected = '32.97'
+
+    const result = solveProblem(notes, difficulty);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit {{.ChallengeCode}}')
+        console.log('Run the following command to submit:\ntainix submit OLYMPIC_3')
     }
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
@@ -31,7 +44,7 @@ function test() {
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '{{.ChallengeToken}}'"
+        "CHALLENGE_TOKEN: 'd5352105897ee1743cf20becae20cc209e86e13ee63386109c2efe1a4b06928c37e40c72789b1347'"
     );
 
     /**
@@ -70,11 +83,11 @@ function init() {
     };
 
     Object.prototype.toEntries = function () {
-      return Object.entries(this)
+        return Object.entries(this)
     }
 
     Array.prototype.arrayOfPairToDict = function () {
-      return arrayOfPairToDict(this);
+        return arrayOfPairToDict(this);
     };
 
     String.prototype.toDictOfCharOccurrences = function (splitter = "") {
@@ -120,12 +133,4 @@ function arrayOfPairToDict(arrayOfPairs) {
         dict[key] = value;
     });
     return dict;
-}
-
-function roundToTwo(num) {
-    return +(Math.round(num + "e+2")  + "e-2");
-}
-
-function isNumeric(str){
-    return /^\d+$/.test(str);
 }

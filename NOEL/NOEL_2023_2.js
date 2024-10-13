@@ -2,28 +2,52 @@ init();
 test();
 
 // Challenge variables
-{{.ChallengeVariables }}
+const kids = ['Rachida_4', 'Noe_8', 'Emma_3', 'Raphael_8', 'Thomas_9', 'Aaron_6', 'Lea_9', 'Rose_1', 'Kevin_9', 'Leon_9', 'Emma_1', 'Alix_6', 'John_8', 'Juliette_9', 'Audrey_9', 'Anna_5', 'Lina_10', 'Icham_5', 'Ambre_9'];
+const fear = 7;
+const time = 38;
 
-function solveProblem({{.ChallengeParams}}) {
-    return "";
+
+function solveProblem(kids, fear, time) {
+    res = ""
+    let t = 0
+    for (let i = 0; i < kids.length; i++) {
+        let [name, f] = kids[i].split("_")
+        r = f < fear ? 3 : 5
+        if (t + r > time) break
+        t += r
+        if (f < fear) res += name[0]
+    }
+
+    return res.length > 0 ? res : "GRINCH"
 }
 
-console.log(`Answer: '${solveProblem({{.ChallengeParams}})}'`);
+console.log(`Answer: '${solveProblem(kids, fear, time)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
-    {{.ChallengeDemoSteps}}
+    // STEPS
+    // [1/7] Tom a été effrayé(e).
+    // [2/7] Tiago n'a pas été effrayé(e).
+    // [3/7] Hugo a été effrayé(e).
+    // [4/7] Mael a été effrayé(e).
+    // [5/7] Leon a été effrayé(e).
+    // [6/7] Kendji n'a pas été effrayé(e).
+    // [7/7] Paul n'a pas été effrayé(e).
 
-    {{.ChallengeTestVariables}}
-    const expected = {{.ChallengeTestExpectedValue}}
 
-    const result = solveProblem({{.ChallengeParams}});
+    const kids = ['Tom_1', 'Tiago_9', 'Hugo_3', 'Mael_5', 'Leon_5', 'Kendji_10', 'Paul_8'];
+    const fear = 7;
+    const time = 35;
+
+    const expected = 'THML'
+
+    const result = solveProblem(kids, fear, time);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit {{.ChallengeCode}}')
+        console.log('Run the following command to submit:\ntainix submit NOEL_2023_2')
     }
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
@@ -31,7 +55,7 @@ function test() {
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '{{.ChallengeToken}}'"
+        "CHALLENGE_TOKEN: '1d04f2b185401bdf84d97bb5b195e1168e1b9abe3352e6371c7225bb98dc14b13c4597826bd5f1cc'"
     );
 
     /**
@@ -55,10 +79,6 @@ function init() {
         return this.sort((a, b) => b - a);
     };
 
-    Array.prototype.max = function () {
-        return this.sortDesc()[0]
-    }
-
     Object.prototype.log = function (arrName = null) {
         if (arrName == null) console.log("Logging:", this);
         else console.log(`Logging ${arrName}:`, this);
@@ -70,11 +90,11 @@ function init() {
     };
 
     Object.prototype.toEntries = function () {
-      return Object.entries(this)
+        return Object.entries(this)
     }
 
     Array.prototype.arrayOfPairToDict = function () {
-      return arrayOfPairToDict(this);
+        return arrayOfPairToDict(this);
     };
 
     String.prototype.toDictOfCharOccurrences = function (splitter = "") {
@@ -120,12 +140,4 @@ function arrayOfPairToDict(arrayOfPairs) {
         dict[key] = value;
     });
     return dict;
-}
-
-function roundToTwo(num) {
-    return +(Math.round(num + "e+2")  + "e-2");
-}
-
-function isNumeric(str){
-    return /^\d+$/.test(str);
 }

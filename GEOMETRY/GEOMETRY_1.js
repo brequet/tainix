@@ -2,28 +2,44 @@ init();
 test();
 
 // Challenge variables
-{{.ChallengeVariables }}
+const shapes = ['square_7', 'square_7', 'hexagon_5', 'triangle_8', 'triangle_3', 'square_8', 'pentagon_5', 'pentagon_5', 'square_6', 'hexagon_7', 'pentagon_4', 'pentagon_2', 'triangle_3', 'square_5', 'square_6', 'pentagon_6', 'pentagon_4'];
 
-function solveProblem({{.ChallengeParams}}) {
-    return "";
+
+function solveProblem(shapes) {
+
+    return shapes.map(shape => {
+        [s, size] = shape.split('_')
+        return {
+            'triangle': 3,
+            'square': 4,
+            'pentagon': 5,
+            'hexagon': 6,
+        }[s] * size
+    }).sumUp()
 }
 
-console.log(`Answer: '${solveProblem({{.ChallengeParams}})}'`);
+console.log(`Answer: '${solveProblem(shapes)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
-    {{.ChallengeDemoSteps}}
+    // STEPS
+    // [1/4] Un héxagone de côté 3 a un périmètre de 18.
+    // [2/4] Un triangle de côté 9 a un périmètre de 27.
+    // [3/4] Un héxagone de côté 8 a un périmètre de 48.
+    // [4/4] Un héxagone de côté 7 a un périmètre de 42.
 
-    {{.ChallengeTestVariables}}
-    const expected = {{.ChallengeTestExpectedValue}}
 
-    const result = solveProblem({{.ChallengeParams}});
+    const shapes = ['hexagon_3', 'triangle_9', 'hexagon_8', 'hexagon_7'];
+
+    const expected = '135'
+
+    const result = solveProblem(shapes);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit {{.ChallengeCode}}')
+        console.log('Run the following command to submit:\ntainix submit GEOMETRY_1')
     }
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
@@ -31,7 +47,7 @@ function test() {
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '{{.ChallengeToken}}'"
+        "CHALLENGE_TOKEN: '5ebcc77a0869c2c66a146974b149c0c156b53a5bbf82982fc481c849bb8b2c2e763feeddcbe5f14a'"
     );
 
     /**
@@ -55,10 +71,6 @@ function init() {
         return this.sort((a, b) => b - a);
     };
 
-    Array.prototype.max = function () {
-        return this.sortDesc()[0]
-    }
-
     Object.prototype.log = function (arrName = null) {
         if (arrName == null) console.log("Logging:", this);
         else console.log(`Logging ${arrName}:`, this);
@@ -70,11 +82,11 @@ function init() {
     };
 
     Object.prototype.toEntries = function () {
-      return Object.entries(this)
+        return Object.entries(this)
     }
 
     Array.prototype.arrayOfPairToDict = function () {
-      return arrayOfPairToDict(this);
+        return arrayOfPairToDict(this);
     };
 
     String.prototype.toDictOfCharOccurrences = function (splitter = "") {
@@ -120,12 +132,4 @@ function arrayOfPairToDict(arrayOfPairs) {
         dict[key] = value;
     });
     return dict;
-}
-
-function roundToTwo(num) {
-    return +(Math.round(num + "e+2")  + "e-2");
-}
-
-function isNumeric(str){
-    return /^\d+$/.test(str);
 }

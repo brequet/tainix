@@ -2,28 +2,39 @@ init();
 test();
 
 // Challenge variables
-{{.ChallengeVariables }}
+const timeBase = 11.7;
+const intensity = 8;
+const frequence = 7;
+const recuperation = 5;
 
-function solveProblem({{.ChallengeParams}}) {
-    return "";
+
+function solveProblem(timeBase, intensity, frequence, recuperation) {
+    tmin = timeBase - (0.8 * intensity + 0.5 * frequence + 0.7 * recuperation) / 10
+    return tmin > 9.58 ? `KEEPTRYING_${tmin}` : `BREAK_${tmin}`;
 }
 
-console.log(`Answer: '${solveProblem({{.ChallengeParams}})}'`);
+console.log(`Answer: '${solveProblem(timeBase, intensity, frequence, recuperation)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
-    {{.ChallengeDemoSteps}}
+    // STEPS
+    // [1/1] Le temps de 9.74 secondes n'est pas un record du monde.
 
-    {{.ChallengeTestVariables}}
-    const expected = {{.ChallengeTestExpectedValue}}
 
-    const result = solveProblem({{.ChallengeParams}});
+    const timeBase = 11.1;
+    const intensity = 8;
+    const frequence = 6;
+    const recuperation = 6;
+
+    const expected = 'KEEPTRYING_9.74'
+
+    const result = solveProblem(timeBase, intensity, frequence, recuperation);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit {{.ChallengeCode}}')
+        console.log('Run the following command to submit:\ntainix submit OLYMPIC_4')
     }
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
@@ -31,7 +42,7 @@ function test() {
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '{{.ChallengeToken}}'"
+        "CHALLENGE_TOKEN: '47a445f81d54393eabed615472057ff7181b644b2aaa7eb686019a0f050807d9d2085a0c05de7c77'"
     );
 
     /**
@@ -70,11 +81,11 @@ function init() {
     };
 
     Object.prototype.toEntries = function () {
-      return Object.entries(this)
+        return Object.entries(this)
     }
 
     Array.prototype.arrayOfPairToDict = function () {
-      return arrayOfPairToDict(this);
+        return arrayOfPairToDict(this);
     };
 
     String.prototype.toDictOfCharOccurrences = function (splitter = "") {
@@ -120,12 +131,4 @@ function arrayOfPairToDict(arrayOfPairs) {
         dict[key] = value;
     });
     return dict;
-}
-
-function roundToTwo(num) {
-    return +(Math.round(num + "e+2")  + "e-2");
-}
-
-function isNumeric(str){
-    return /^\d+$/.test(str);
 }

@@ -2,28 +2,52 @@ init();
 test();
 
 // Challenge variables
-{{.ChallengeVariables }}
+const y = -1;
+const moves = ['y:2', 'x:7', 'y:2', 'x:7', 'y:7', 'y:10', 'y:4', 'y:-1', 'y:-10', 'y:6', 'y:9', 'x:5', 'y:5', 'x:-10', 'y:-6', 'y:6', 'y:6', 'x:3', 'x:2', 'y:-3', 'y:9', 'y:-10', 'x:-3', 'x:-5', 'y:-5', 'y:9'];
+const names = ['Ambre', 'Anne', 'Catherine', 'John', 'Chloe', 'Stephane', 'Raphael', 'Alix', 'Rachida', 'Amelie', 'Samir', 'Walim'];
+const x = 0;
 
-function solveProblem({{.ChallengeParams}}) {
-    return "";
+
+function solveProblem(y, moves, names, x) {
+    let { dx, dy } = moves.map(m => m.split(":")).reduce((acc, cur) => {
+        if (cur[0] == 'x') acc.dx += parseInt(cur[1])
+        if (cur[0] == 'y') acc.dy += parseInt(cur[1])
+        return acc
+    }, { dx: 0, dy: 0 })
+        .log()
+    return `SOS:${names.map(n => n[0]).join('')}_PLACE:${x + dx};${y + dy}`;
 }
 
-console.log(`Answer: '${solveProblem({{.ChallengeParams}})}'`);
+console.log(`Answer: '${solveProblem(y, moves, names, x)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
-    {{.ChallengeDemoSteps}}
+    // STEPS
+    // [1/9] Les initiales sont MSAPLJ.
+    // [2/9] L'avion démarre en 1;-4
+    // [3/9] Déplacement de -8 sur l'axe x.
+    // [4/9] Déplacement de 8 sur l'axe y.
+    // [5/9] Déplacement de -4 sur l'axe y.
+    // [6/9] Déplacement de 6 sur l'axe x.
+    // [7/9] Déplacement de 2 sur l'axe x.
+    // [8/9] Déplacement de 2 sur l'axe x.
+    // [9/9] Déplacement de 4 sur l'axe y.
 
-    {{.ChallengeTestVariables}}
-    const expected = {{.ChallengeTestExpectedValue}}
 
-    const result = solveProblem({{.ChallengeParams}});
+    const moves = ['x:-8', 'y:8', 'y:-4', 'x:6', 'x:2', 'x:2', 'y:4'];
+    const names = ['Martine', 'Samir', 'Anne', 'Pierre', 'Louise', 'Jack'];
+    const x = 1;
+    const y = -4;
+
+    const expected = 'SOS:MSAPLJ_PLACE:3;4'
+
+    const result = solveProblem(y, moves, names, x);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit {{.ChallengeCode}}')
+        console.log('Run the following command to submit:\ntainix submit CODE_LANTA')
     }
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
@@ -31,7 +55,7 @@ function test() {
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '{{.ChallengeToken}}'"
+        "CHALLENGE_TOKEN: '303a42d4cb70728f561dc308968d3958cec09ed13d1799f1599e4bc8f20ef00ba438b64b20fc578d'"
     );
 
     /**
@@ -55,10 +79,6 @@ function init() {
         return this.sort((a, b) => b - a);
     };
 
-    Array.prototype.max = function () {
-        return this.sortDesc()[0]
-    }
-
     Object.prototype.log = function (arrName = null) {
         if (arrName == null) console.log("Logging:", this);
         else console.log(`Logging ${arrName}:`, this);
@@ -70,11 +90,11 @@ function init() {
     };
 
     Object.prototype.toEntries = function () {
-      return Object.entries(this)
+        return Object.entries(this)
     }
 
     Array.prototype.arrayOfPairToDict = function () {
-      return arrayOfPairToDict(this);
+        return arrayOfPairToDict(this);
     };
 
     String.prototype.toDictOfCharOccurrences = function (splitter = "") {
@@ -120,12 +140,4 @@ function arrayOfPairToDict(arrayOfPairs) {
         dict[key] = value;
     });
     return dict;
-}
-
-function roundToTwo(num) {
-    return +(Math.round(num + "e+2")  + "e-2");
-}
-
-function isNumeric(str){
-    return /^\d+$/.test(str);
 }

@@ -8,8 +8,23 @@ const planes = ['P:96,87C:ANB', 'P:95,93C:GSU', 'P:100,57C:XCL', 'P:16,89C:JFG',
 
 
 function solveProblem(islandX, islandY, planes) {
-    return planes.map(e=>e.split("C:"))
-    .map(e => );
+    return planes.map(e => {
+        const [p1, cValue] = e.split('C:');
+        const [x, y] = p1.split('P:')[1].split(',');
+        return {
+            P: {
+                x: x,
+                y: y
+            },
+            distanceToIsland: (Math.sqrt(Math.pow(islandX - x, 2) + Math.pow(islandY - y, 2))).toFixed(2),
+            C: cValue
+        }
+    })
+        .sort((a, b) => a.distanceToIsland - b.distanceToIsland)
+        .log()
+        .slice(0, 3)
+        .map(e => e.C)
+        .join('')
 }
 
 console.log(`Answer: '${solveProblem(islandX, islandY, planes)}'`);
@@ -18,14 +33,14 @@ function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
     // STEPS
-	// [1/3] L'avion NEP se trouve à une distance de 37.48 de l'île.
-	// [2/3] L'avion BQC se trouve à une distance de 48.1 de l'île.
-	// [3/3] L'avion YWG se trouve à une distance de 50.49 de l'île.
+    // [1/3] L'avion NEP se trouve à une distance de 37.48 de l'île.
+    // [2/3] L'avion BQC se trouve à une distance de 48.1 de l'île.
+    // [3/3] L'avion YWG se trouve à une distance de 50.49 de l'île.
 
 
     const islandX = 59;
-const islandY = 59;
-const planes = ['P:86,33C:NEP', 'P:40,7C:GFR', 'P:94,92C:BQC', 'P:16,92C:EQW', 'P:52,9C:YWG', 'P:0,87C:MFX', 'P:99,93C:PXC'];
+    const islandY = 59;
+    const planes = ['P:86,33C:NEP', 'P:40,7C:GFR', 'P:94,92C:BQC', 'P:16,92C:EQW', 'P:52,9C:YWG', 'P:0,87C:MFX', 'P:99,93C:PXC'];
 
     const expected = 'NEPBQCYWG'
 
@@ -75,9 +90,9 @@ function init() {
     Object.prototype.toSortedDescList = function () {
         return dictionnaryToSortedDescArray(this);
     };
-    
+
     Array.prototype.arrayOfPairToDict = function () {
-      return arrayOfPairToDict(this);
+        return arrayOfPairToDict(this);
     };
 
     String.prototype.toDictOfCharOccurrences = function () {
@@ -124,4 +139,3 @@ function arrayOfPairToDict(arrayOfPairs) {
     });
     return dict;
 }
-  
