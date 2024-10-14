@@ -2,50 +2,57 @@ init();
 test();
 
 // Challenge variables
-const depart = 1985;
-const anniversaire = '11-15';
-const sauts = ['1998-05-19', '1970-01-10', '1974-07-02', '1992-07-19', '1982-02-23', '1980-04-07', '1981-08-20', '1992-10-14', '1970-06-19', '2004-10-04', '1983-08-11', '1976-09-21', '2014-06-29', '1988-08-16', '1976-07-28', '1995-02-12', '2013-12-17'];
+const candidates = 'YGMPDOVK';
+const votes = 'PVZTGDKPXYGGPVOKYOMGJVYJGEOOXOVDOKGOMKMPJPYOYKGOVJOYOGOYPGVVVJMDOTXYOOOTVPYOTPTGOGYMODEMOPEOMKTPYYGTPVMYDVDVYGVPPOZVOMPVVYZTTXKYYOOMGP';
 
 
-function solveProblem(depart, anniversaire, sauts) {
+function solveProblem(votes, candidates) {
+    let c = candidates.split("").reduce((acc, cur) => {
+        if (!(cur in acc)) acc[cur] = 0;
+        return acc
+    }, {})
+    votes.toDictOfCharOccurrences().toEntries()
+        .forEach(e => e[0] in c && (c[e[0]] += e[1]))
 
-    return "";
+    let total = c.toEntries().map(e => e[1]).sumUp()
+
+    let [first, second] = c.toSortedDescList().slice(0, 2)
+    return `${first[0]}${round(first[1] / total * 100, 1)}-${second[0]}${round(second[1] / total * 100, 1)}`
 }
 
-console.log(`Answer: '${solveProblem(depart, anniversaire, sauts)}'`);
+console.log(`Answer: '${solveProblem(votes, candidates)}'`);
 
 function test() {
     console.log('-'.repeat(15) + ' Start Test ' + '-'.repeat(15));
 
     // STEPS
-    // [1/6] Me voilà dans le futur... En 2007... Avant le 02/08. Je ne compte donc pas l'année, soit 21 année(s) de décalage
-    // [2/6] Me voilà dans le futur... En 1994... Après le 02/08. Je compte donc bien l'année, soit 9 année(s) de décalage
-    // [3/6] Me voilà dans le futur... En 1994... Avant le 02/08. Je ne compte donc pas l'année, soit 8 année(s) de décalage
-    // [4/6] Me voilà dans le passé... En 1980... Après le 02/08. Je ne compte donc pas l'année, soit 4 année(s) de décalage
-    // [5/6] Me voilà dans le futur... En 1987... Avant le 02/08. Je ne compte donc pas l'année, soit 1 année(s) de décalage
-    // [6/6] Après tous ces sauts dans le temps, j'ai vécu un décalage de 35 année(s).
+    // [1/4] Il y a 104 votes au total.
+    // [2/4] Il y a 23 votes blancs à retirer du décompte.
+    // [3/4] Le ou la candidat(e) W a eu 24 voix.
+    // [4/4] Le ou la candidat(e) I a eu 22 voix.
 
 
-    const depart = 1985;
-    const anniversaire = '08-02';
-    const sauts = ['2007-04-22', '1994-08-25', '1994-04-30', '1980-12-27', '1987-03-05'];
+    const candidates = 'NKWOI';
+    const votes = 'WIOKIWIKLNWOTWOWIWKNIONKKKOLNIWLKOIWLKLOOWLISWWOZOWIIINLOIOIHWWIIWOZZWWLIOLWWSIOOKILKORWMWWWOLIHLOOWIITI';
 
-    const expected = '35'
+    const expected = 'W29.6-I27.2'
 
-    const result = solveProblem(depart, anniversaire, sauts);
+    const result = solveProblem(votes, candidates);
     if (result != expected) {
         console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
     } else {
         console.log(`Test passed ! Got the expected result: ${expected}`);
-        console.log('Run the following command to submit:\ntainix submit FUTURE')
+        console.log('Run the following command to submit:\ntainix submit ELECTION')
     }
+
+
 
     console.log('-'.repeat(15) + ' End Test ' + '-'.repeat(15));
 }
 
 function init() {
     console.log(
-        "CHALLENGE_TOKEN: '1bff7b60defbf6170ba63a28f7ddb62d2031165b2d98572adad1930c20e8c7e72db28d6e3b66ee1a'"
+        "CHALLENGE_TOKEN: 'bd456f4b9c459bcb3d38ef9af96945eba58e89c13d19a1a68dea7fa440025e132fba8cb4a355d3ce'"
     );
 
     /**
@@ -138,4 +145,12 @@ function arrayOfPairToDict(arrayOfPairs) {
 
 function roundToTwo(num) {
     return +(Math.round(num + "e+2") + "e-2");
+}
+
+function round(num, precision = 2) {
+    return +(Math.round(num + `e+${precision}`) + `e-${precision}`);
+}
+
+function isNumeric(str) {
+    return /^\d+$/.test(str);
 }
