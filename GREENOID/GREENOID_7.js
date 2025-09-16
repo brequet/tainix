@@ -2,83 +2,109 @@ init();
 test();
 
 // Challenge variables
-const depart = 1985;
-const anniversaire = "04-20";
-const sauts = [
-  "1997-12-22",
-  "2008-11-29",
-  "2009-03-31",
-  "1995-04-09",
-  "2012-07-15",
-  "1999-10-02",
-  "1988-03-02",
-  "1975-08-10",
-  "1973-12-26",
-  "2006-12-27",
-  "1988-03-03",
-  "1980-07-21",
-  "1970-01-22",
-  "1988-06-21",
-  "1973-09-23",
-  "1970-12-24",
-  "2010-05-20",
+const keys = [
+  "t573iu789c7",
+  "md7311s34n45",
+  "i733p4ccp7l43",
+  "8jenk6487of55",
+  "5q6a596in923",
+  "v37whz363p3",
+  "c8d5kss7y913",
+  "22om24fe682r3p",
 ];
 
-function solveProblem(depart, anniversaire, sauts) {
-  return sauts
-    .map((e) => {
-      let [y, m, d] = e.split("-").map(Number);
-      let diff = y - depart;
-      cl("date");
-      if (diff < 0) {
-        if (`${m}-${d}` < anniversaire) {
-          return Math.abs(diff);
-        } else {
-          return Math.abs(diff) - 1;
-        }
-      } else {
-        if (`${m}-${d}` > anniversaire) {
-          return Math.abs(diff);
-        } else {
-          return Math.abs(diff) - 1;
-        }
-      }
-    })
-    .log()
-    .sumUp();
+function isInt(value) {
+  return (
+    !isNaN(value) &&
+    parseInt(Number(value)) == value &&
+    !isNaN(parseInt(value, 10))
+  );
 }
 
-console.log(`Answer: '${solveProblem(depart, anniversaire, sauts)}'`);
+function dec2bin(dec) {
+  return (dec >>> 0).toString(2);
+}
+
+function compose(k1, k2) {
+  let res = "";
+  for (let i = 0; i < k1.length; i++) {
+    if (k1.toString()[i] == k2.toString()[i]) res += "1";
+    else res += 0;
+  }
+  return res;
+}
+
+function solveProblem(keys) {
+  let bins = keys
+    .map((key) =>
+      key
+        .split("")
+        .map((char) => {
+          if (isInt(char)) {
+            return parseInt(char);
+          } else {
+            return char.charCodeAt(0) - 97 + 10;
+          }
+        })
+        .sumUp()
+    )
+    .map(dec2bin);
+  let comps = [];
+  for (let i = 0; i < bins.length - 1; i++) {
+    for (let j = i + 1; j < bins.length; j++) {
+      let composition = compose(bins[i], bins[j]);
+      comps.push(composition);
+    }
+  }
+
+  return comps
+    .map((e) => parseInt(e, 2))
+    .sort((a, b) => a - b)
+    .log("bits sort")
+    .map((e) => e % 36)
+    .log()
+    .map((e) => {
+      if (e < 10) return e.toString();
+      else return String.fromCharCode(e - 10 + 97);
+    })
+    .log()
+    .join("");
+}
+
+console.log(`Answer: '${solveProblem(keys)}'`);
 
 function test() {
   console.log("-".repeat(15) + " Start Test " + "-".repeat(15));
 
   // STEPS
-  // [1/6] Me voilà dans le passé... En 1982... Avant le 25/03. Je compte donc bien l'année, soit 3 année(s) de décalage
-  // [2/6] Me voilà dans le futur... En 1986... Après le 25/03. Je compte donc bien l'année, soit 1 année(s) de décalage
-  // [3/6] Me voilà dans le passé... En 1975... Après le 25/03. Je ne compte donc pas l'année, soit 9 année(s) de décalage
-  // [4/6] Me voilà dans le futur... En 2000... Après le 25/03. Je compte donc bien l'année, soit 15 année(s) de décalage
-  // [5/6] Me voilà dans le futur... En 2013... Après le 25/03. Je compte donc bien l'année, soit 28 année(s) de décalage
-  // [6/6] Après tous ces sauts dans le temps, j'ai vécu un décalage de 32 année(s).
+  // [1/6] --------- Extrait système ----------
+  // [2/6] Composition des clés 148g9mi6q9k5 et 6b135kdu29i9k
+  // [3/6] Les valeurs numériques sont 144 et 147
+  // [4/6] Les valeurs binaires sur 8 bits sont 10010000 et 10010011
+  // [5/6] La composition est 11111100
+  // [6/6] -------- Fin extrait système -------
 
-  const depart = 1985;
-  const anniversaire = "03-25";
-  const sauts = [
-    "1982-02-17",
-    "1986-10-07",
-    "1975-07-28",
-    "2000-06-11",
-    "2013-12-07",
+  const keys = [
+    "148g9mi6q9k5",
+    "6b135kdu29i9k",
+    "26q9gj6p7vv3",
+    "19n69n5til2",
+    "5lrn64e5525",
+    "vs1346a4b5gi",
+    "1v663ye1o1t",
+    "z22r8d36k28h",
   ];
 
-  const expected = "32";
+  const expected = "35opqsrfh012488abcdeexxyz012";
 
-  const result = solveProblem(depart, anniversaire, sauts);
+  const result = solveProblem(keys);
   if (result != expected) {
     console.log(`WRONG RESULT: Expected '${expected}', got '${result}'`);
   } else {
     console.log(`Test passed ! Got the expected result: ${expected}`);
-    console.log("Run the following command to submit:\ntainix submit FUTURE");
+    console.log(
+      "Run the following command to submit:\ntainix submit GREENOID_7"
+    );
   }
 
   console.log("-".repeat(15) + " End Test " + "-".repeat(15));
@@ -86,7 +112,7 @@ function test() {
 
 function init() {
   console.log(
-    "CHALLENGE_TOKEN: '308101415f3abb3da1b0b084be41de044a7f4465d10ef2d9405f2ad4f1663036a53eef4a0d174b6c'"
+    "CHALLENGE_TOKEN: '7aea95ef3cbbf0da7c6eb3540686e912ea44e15bd017a062bea772f1d4a329d6a170c1bd84c3a06d'"
   );
 
   /**

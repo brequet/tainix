@@ -3,29 +3,12 @@ test();
 
 // Challenge variables
 const map = [
-  "w",
-  "w",
-  "w",
-  "w",
-  "r",
-  "w",
   "r",
   "w",
   "w",
   "w",
-  "w",
-  "w",
-  "w",
-  "w",
-  "w",
-  "w",
   "r",
-  "w",
   "r",
-  "w",
-  "w",
-  "w",
-  "w",
   "w",
   "w",
   "w",
@@ -49,17 +32,6 @@ const map = [
   "w",
   "w",
   "w",
-  "r",
-  "w",
-  "w",
-  "w",
-  "w",
-  "r",
-  "w",
-  "w",
-  "w",
-  "w",
-  "w",
   "w",
   "w",
   "w",
@@ -75,6 +47,44 @@ const map = [
   "w",
   "r",
   "w",
+  "w",
+  "w",
+  "w",
+  "w",
+  "w",
+  "w",
+  "w",
+  "w",
+  "r",
+  "w",
+  "w",
+  "w",
+  "w",
+  "r",
+  "w",
+  "w",
+  "w",
+  "r",
+  "w",
+  "w",
+  "w",
+  "w",
+  "w",
+  "w",
+  "w",
+  "w",
+  "r",
+  "w",
+  "r",
+  "w",
+  "w",
+  "w",
+  "w",
+  "w",
+  "w",
+  "w",
+  "w",
+  "r",
   "r",
   "w",
   "w",
@@ -85,18 +95,8 @@ const map = [
   "w",
   "w",
   "w",
-  "r",
-  "w",
-  "w",
-  "w",
   "w",
   "r",
-  "w",
-  "w",
-  "r",
-  "w",
-  "w",
-  "w",
   "w",
   "w",
   "w",
@@ -106,47 +106,36 @@ const map = [
 ];
 
 function solveProblem(map) {
-  const chunkSize = 10;
-  const table = map.reduce((acc, _, i) => {
-    if (i % chunkSize === 0) acc.push(map.slice(i, i + chunkSize));
-    return acc;
-  }, []);
+  let grid = [];
+  let chunkSize = 10;
+  for (let i = 0; i < map.length / chunkSize; i++) {
+    grid.push(map.slice(i * chunkSize, (i + 1) * chunkSize));
+  }
 
-  const dejaBleuCount = map.filter((e) => e == "b").length;
-
-  let coordsToWhite = {};
-
-  table.forEach((row, i) => {
-    row.forEach((e, j) => {
-      if (e == "w") {
-        coordsToWhite[i + "," + j] = true;
+  let reds = [];
+  for (let i = 0; i < grid.length; i++) {
+    let row = grid[i];
+    for (let j = 0; j < row.length; j++) {
+      if (row[j] === "r") {
+        reds.push([i, j]);
       }
-    });
+    }
+  }
+  reds.log("reds");
+
+  let blues = {};
+
+  reds.forEach(([i, j]) => {
+    cl("debug", [i, j]);
+    i < chunkSize - 1 && !([i + 1, j] in reds) && (blues[[i + 1, j]] = 1);
+    i > 0 && !([i - 1, j] in reds) && (blues[[i - 1, j]] = 1);
+    j < chunkSize - 1 && !([i, j + 1] in reds) && (blues[[i, j + 1]] = 1);
+    j > 0 && !([i, j - 1] in reds) && (blues[[i, j - 1]] = 1);
   });
 
-  table.forEach((row, i) => {
-    row.forEach((e, j) => {
-      if (e == "r") {
-        if (i > 0 && table[i - 1][j] == "w") {
-          coordsToWhite[i - 1 + "," + j] = false;
-        }
-        if (i < table.length - 1 && table[i + 1][j] == "w") {
-          coordsToWhite[i + 1 + "," + j] = false;
-        }
-        if (j > 0 && table[i][j - 1] == "w") {
-          coordsToWhite[i + "," + j - 1] = false;
-        }
-        if (j < table.length - 1 && table[i][j + 1] == "w") {
-          coordsToWhite[i + "," + j + 1] = false;
-        }
-      }
-    });
-  });
+  blues.log("blues");
 
-  return (
-    dejaBleuCount +
-    coordsToWhite.toEntries().filter((e) => e[1] == false).length
-  );
+  return blues.toEntries().length;
 }
 
 console.log(`Answer: '${solveProblem(map)}'`);
@@ -168,37 +157,6 @@ function test() {
     "w",
     "w",
     "w",
-    "r",
-    "w",
-    "w",
-    "w",
-    "r",
-    "w",
-    "r",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
     "w",
     "w",
     "w",
@@ -221,8 +179,10 @@ function test() {
     "w",
     "w",
     "w",
+    "r",
     "w",
     "w",
+    "r",
     "w",
     "w",
     "w",
@@ -233,14 +193,6 @@ function test() {
     "r",
     "w",
     "r",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
-    "w",
     "w",
     "r",
     "w",
@@ -254,12 +206,49 @@ function test() {
     "w",
     "w",
     "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
     "r",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
     "w",
     "w",
   ];
 
-  const expected = "28";
+  const expected = "23";
 
   const result = solveProblem(map);
   if (result != expected) {
@@ -274,7 +263,7 @@ function test() {
 
 function init() {
   console.log(
-    "CHALLENGE_TOKEN: 'ff7022424eb3710f57eb3e2e460a35b053e334994670ec52ab8ca82a2b133bd23dea465a89863817'"
+    "CHALLENGE_TOKEN: '42e3597d83ca1af03220de288a39f5970a0b24dbc5dd0203df53eac57ce10f44fef992ce0ab9797f'"
   );
 
   /**
