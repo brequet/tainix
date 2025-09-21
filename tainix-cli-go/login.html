@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <title>Log in to your account - Tainix</title>
+    <meta name="description" content="Access your account, find your progress and your secret key."/>
+    <link href="/favicon.ico?1758268017" type="image/x-icon" rel="icon"/><link href="/favicon.ico?1758268017" type="image/x-icon" rel="shortcut icon"/>
+    
+        <link rel="canonical" href="https://tainix.fr/identification" />
+    
+    
+	<link rel="stylesheet" href="/front_office/css/theme.min.css?1758268008"/>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=DM+Sans:400,500,700|DM+Serif+Display&display=swap" rel="stylesheet">
+</head>
+
+<body data-aos-easing="ease-out-quad" data-aos-duration="700" data-aos-delay="0" cz-shortcut-listen="true">
+
+    <main>
+        <div class="container-lg d-flex flex-column">
+            <div class="row align-items-center justify-content-center gx-0 min-vh-100 mt-n1">
+                <div class="col-md-7 col-lg-5 py-10">
+                    
+<div class="text-center">
+    <h1 class="display-5 mb-4"><span class="t-title-span mb-5">T;</span><br /><br />Log in to your account</h1>
+
+    <p class="text-muted fs-sm">
+                Find your secret key and track your progress. If you don&#39;t have an account yet, <a href="/inscription" style="text-decoration: underline;">you can register here</a>.    </p>
+</div>
+
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    Invalid captcha
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+<div class="mb-6">
+    <form method="post" accept-charset="utf-8" action="/identification"><div style="display:none;"><input type="hidden" name="_csrfToken" autocomplete="off" value="3QZBPeJy4VmeiodGoHikkTTqbEoITzMl6ZUmOY5IfVlYL5cbZmuAqvgL3XZ/MLx62EP4QEa6upOB90RZiEbXhkpJ24JnxtGGA48OLGt/B0Hb9xcPuXwYOzxMr30ACOOczG7sRUcCjky+IMt4cNuD9Q=="/></div>                    <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+            <input type="hidden" name="action" value="validate_captcha">
+                
+        <div class="form-group">
+            <div class="input text"><label for="username">Username or email address</label><input type="text" name="username" class="form-control" required="required" autofocus="autofocus" id="username" value="baptiste.requet@thalesgroup.com"/></div>        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label><input type="password" name="password" class="form-control" aria-label="Password" aria-describedby="authPasswordCaption" required="required" id="password" value="Mjoyhk25*thales"/>        </div>
+
+        <div class="form-group form-check">
+            <input type="hidden" name="remember_me" value="0"/><input type="checkbox" name="remember_me" value="1" checked="checked" id="remember_me" class="form-check-input" checked="checked">            <label for="remember_me" class="form-check-label">Remember me</label>
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary w-100" type="submit">Login</button>
+        </div>
+    <div style="display:none;"><input type="hidden" name="_Token[fields]" autocomplete="off" value="c470ccc6193780829536eaf34acd1e204d5843c9%3A"/><input type="hidden" name="_Token[unlocked]" autocomplete="off" value=""/></div></form>
+    <a href="https://github.com/login/oauth/authorize?scope=read:user,user:email&access_type=online&redirect_uri=https%3A%2F%2Ftainix.fr%2Fusers%2Flogin-with-github&response_type=code&client_id=6f0fa69214930919798c" class="btn btn-secondary w-100"><i class="fe fe-github me-2"></i>Connect via Github</a>
+    <div class="text-center mt-4 fs-xs text-secondary">
+        Vous avez un compté créé par votre école ou votre entreprise ?    </div>
+    <button class="btn btn-success w-100 mt-2" type="button" data-toggle="modal" data-target="#code-auth-modal">
+        Se connecter via mon établissement    </button>
+</div>
+
+<div class="text-center">
+    <a href="/users/forgot-password" class="fs-sm">Forgot your password?</a></div>
+
+<br />
+
+<div class="text-center">
+    <a href="/" class="fs-sm">← Back to site</a></div>
+
+<!-- Modal Connexion par code -->
+<div class="modal fade" id="code-auth-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="mt-6 position-relative px-4">
+                <div class="d-flex justify-content-end">
+                    <button class="fs-1" style="border: 0; background: 0; line-height: 0;" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <h3 class="modal-title text-center" id="exampleModalLabel">
+                    Connexion via mon établissement                </h3>
+            </div>
+            <div class="modal-body d-flex gap-4 flex-column">
+                                    <a href="/code-auth/candidate" class="w-full btn btn-primary text-center">J'ai un test à passer</a>                                    <a href="/code-auth/student" class="w-full btn btn-primary text-center">Je dois suivre un module</a>                                    <a href="/code-auth/intervenant" class="w-full btn btn-primary text-center">Je suis intervenant.e</a>                            </div>
+        </div>
+    </div>
+</div>                </div>
+
+                <!-- <div class="col-lg-6 offset-lg-1 align-self-stretch d-none d-lg-block">
+                    <div class="h-100 vw-50 bg-cover border-top border-top-4 border-transparent" style="background-image: url(/front_office/img/fond-code.jpg); background-clip: content-box;"></div>
+                </div> -->
+            </div>
+        </div>
+    </main>    
+
+    
+	<script src="/js/jquery.min.js?1758268018"></script>
+	<script src="/front_office/js/bootstrap.bundle.min.js?1758268008"></script>
+	<script src="/goodkit/js/vendor.bundle.js?1758268014"></script>
+	<script src="/goodkit/js/theme.bundle.js?1758268014"></script>
+    
+            <script src="https://www.google.com/recaptcha/api.js?render=6Lf055IcAAAAANQqUUuGpoRy8oUpUNUj9fodanHS"></script>
+        <script>
+            grecaptcha.ready(function() {
+            // do request for recaptcha token
+            // response is promise with passed token
+                grecaptcha
+                    .execute('6Lf055IcAAAAANQqUUuGpoRy8oUpUNUj9fodanHS', {action:'validate_captcha'})
+                    .then(function(token) {
+                        // add token value to form
+                        document.getElementById('g-recaptcha-response').value = token;
+                    });
+            });
+        </script>
+          
+</body>
+</html>
