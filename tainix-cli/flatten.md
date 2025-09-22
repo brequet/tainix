@@ -1,22 +1,26 @@
 # Flattened Codebase
 
-Total files: 13
+Total files: 17
 
 ## Table of Contents
 
 1. [.\Cargo.toml](#file-1)
-2. [.\src\cli.rs](#file-2)
-3. [.\src\commands\generate.rs](#file-3)
-4. [.\src\commands\mod.rs](#file-4)
-5. [.\src\config.rs](#file-5)
-6. [.\src\error.rs](#file-6)
-7. [.\src\main.rs](#file-7)
-8. [.\src\tainix\client.rs](#file-8)
-9. [.\src\tainix\mod.rs](#file-9)
-10. [.\src\tainix\models.rs](#file-10)
-11. [.\src\tainix\parser.rs](#file-11)
-12. [.\tainix-api-analysis\game.js](#file-12)
-13. [.\tainix-api-analysis\notes.md](#file-13)
+2. [.\challenges\DETECTIVE\DETECTIVE.ts](#file-2)
+3. [.\src\cli.rs](#file-3)
+4. [.\src\commands\generate.rs](#file-4)
+5. [.\src\commands\mod.rs](#file-5)
+6. [.\src\config.rs](#file-6)
+7. [.\src\error.rs](#file-7)
+8. [.\src\main.rs](#file-8)
+9. [.\src\scaffolding.rs](#file-9)
+10. [.\src\tainix\client.rs](#file-10)
+11. [.\src\tainix\mod.rs](#file-11)
+12. [.\src\tainix\models.rs](#file-12)
+13. [.\src\tainix\parser.rs](#file-13)
+14. [.\src\templates\challenge.ts](#file-14)
+15. [.\src\templating.rs](#file-15)
+16. [.\tainix-api-analysis\game.js](#file-16)
+17. [.\tainix-api-analysis\notes.md](#file-17)
 
 ## File 1: .\Cargo.toml
 
@@ -30,14 +34,59 @@ edition = "2024"
 anyhow = "1.0.100"
 clap = { version = "4.5.48", features = ["derive"] }
 dotenvy = "0.15.7"
+lazy_static = "1.5.0"
 regex = "1.11.2"
 reqwest = { version = "0.12.23", features = ["json"] }
 scraper = "0.24.0"
+serde = { version = "1.0.225", features = ["derive"] }
+serde_json = "1.0.145"
+tera = "1.20.0"
 thiserror = "2.0.16"
 tokio = { version = "1.47.1", features = ["full"] }
 ```
 
-## File 2: .\src\cli.rs
+## File 2: .\challenges\DETECTIVE\DETECTIVE.ts
+
+```ts
+/**
+ * Tainix Challenge: meurtre-syntheria (DETECTIVE)
+ *
+ * Problem:
+ * You can find the problem description on the Tainix website.
+ *
+ * No steps found for this challenge.
+ */
+
+// Example of the data you will receive:
+const exampleData = {"indices":["taille_is_petit","poids_is_enrobe","poids_not_mince","cheveux_is_chatain","yeux_is_vairons"],"suspects":["nom:Sylvie,yeux:vairons,cheveux:chatain,taille:petit,poids:enrobe","nom:Rachida,yeux:vairons,cheveux:blanc,taille:moyen,poids:enrobe","nom:Alix,yeux:noir,cheveux:bleu,taille:petit,poids:moyen","nom:Mohamed,yeux:bleus,cheveux:roux,taille:petit,poids:enrobe","nom:Fatou,yeux:noir,cheveux:vert,taille:grand,poids:enrobe"]};
+
+// --- Your implementation below ---
+
+function solve(data: typeof exampleData): string | number {
+  console.log('Received data:', data);
+  
+  // TODO: Implement your solution here
+  const result = 0;
+  
+  return result;
+}
+
+// --- Tests ---
+
+const result = solve(exampleData);
+console.log(`Your result is: ${result}`);
+
+const expectedOutput = `Sylvie_4`;
+console.log(`Expected output is: ${expectedOutput}`);
+
+if (String(result) === String(expectedOutput)) {
+    console.log("✅ Success!");
+} else {
+    console.log("❌ Failed!");
+}
+```
+
+## File 3: .\src\cli.rs
 
 ```rs
 use clap::{Parser, Subcommand};
@@ -61,124 +110,69 @@ pub enum Commands {
 }
 ```
 
-## File 3: .\src\commands\generate.rs
+## File 4: .\src\commands\generate.rs
 
 ```rs
 use crate::config::Config;
+use crate::scaffolding::write_challenge_file;
+use crate::tainix::models::ChallengeData;
 use crate::tainix::{client::TainixClient, parser::parse_challenge_page};
+use crate::templating::render_ts_template;
 use anyhow::{Context, Result};
-use std::fs;
 
+/// Main handler for the 'generate' command.
+/// Orchestrates fetching, parsing, rendering, and file writing.
 pub async fn handle_generate(challenge_name: String, config: &Config) -> Result<()> {
     println!("Generating challenge: {}...", challenge_name);
 
-    let client_config = Config {
-        phpsessid: config.phpsessid.clone(),
-        output_dir: config.output_dir.clone(),
-    };
-    let client = TainixClient::new(client_config);
+    let client = TainixClient::new(config);
     let html = client
-        .fetch_challenge_page(&challenge_name)
+        .fetch_challenge_data_page(&challenge_name)
         .await
         .context("Failed to fetch challenge page")?;
+    println!("Successfully fetched challenge page.");
 
-    let details =
-        parse_challenge_page(&html).context("Failed to parse challenge details from HTML")?;
+    let details = parse_challenge_page(&challenge_name, &html)
+        .context("Failed to parse challenge details from HTML")?;
     println!("Successfully parsed challenge details.");
 
-    let folder_path = format!("./{}/{}", config.output_dir, details.challenge_code);
-    fs::create_dir_all(&folder_path)
-        .with_context(|| format!("Failed to create directory: {}", folder_path))?;
+    let input_data = client
+        .fetch_challenge_input_data(&details.challenge_code)
+        .await
+        .context("Failed to fetch challenge input data")?;
 
-    let ts_content = generate_ts_template(&details);
-    let file_path = format!("{}/{}.ts", folder_path, details.challenge_code);
-    fs::write(&file_path, ts_content)
-        .with_context(|| format!("Failed to write TypeScript file to: {}", file_path))?;
+    let data = ChallengeData {
+        details,
+        input_data,
+    };
 
-    println!("✅ Successfully generated project in '{}'", folder_path);
+    let ts_content = render_ts_template(&data).context("Failed to render TypeScript template")?;
+
+    write_challenge_file(
+        &config.output_dir,
+        &data.details.challenge_code,
+        &ts_content,
+    )
+    .context("Failed to write project files")?;
 
     Ok(())
 }
-
-fn generate_ts_template(details: &crate::tainix::models::ChallengeDetails) -> String {
-    let challenge_code = &details.challenge_code;
-    let example_input = details
-        .example_input
-        .as_deref()
-        .unwrap_or("{\n  \"message\": \"Could not parse example input\"\n}");
-
-    let steps_comment = if !details.steps.is_empty() {
-        let formatted_steps = details
-            .steps
-            .iter()
-            .map(|s| format!(" * - {}", s))
-            .collect::<Vec<_>>()
-            .join("\n");
-        format!(" * Steps:\n{}", formatted_steps)
-    } else {
-        " * No steps found for this challenge.".to_string()
-    };
-
-    format!(
-        r#"/**
- * Tainix Challenge: {challenge_code}
- *
- * Problem:
- * You can find the problem description on the Tainix website.
- *
-{steps_comment}
- */
-
-// Example of the data you will receive:
-const exampleData = {example_input};
-
-// --- Your implementation below ---
-
-function solve(data: typeof exampleData): string | number {{
-  console.log('Received data:', data);
-  
-  // TODO: Implement your solution here
-  const result = 0;
-  
-  return result;
-}}
-
-// --- Tests ---
-
-const result = solve(exampleData);
-console.log(`Your result is: ${{result}}`);
-
-const expectedOutput = `{expected_output}`;
-console.log(`Expected output is: ${{expected_output}}`);
-
-if (String(result) === String(expectedOutput)) {{
-    console.log("✅ Success!");
-}} else {{
-    console.log("❌ Failed!");
-}}
-"#,
-        challenge_code = challenge_code,
-        steps_comment = steps_comment,
-        example_input = example_input,
-        expected_output = details.expected_output.as_deref().unwrap_or(""),
-    )
-}
 ```
 
-## File 4: .\src\commands\mod.rs
+## File 5: .\src\commands\mod.rs
 
 ```rs
 pub mod generate;
 ```
 
-## File 5: .\src\config.rs
+## File 6: .\src\config.rs
 
 ```rs
 use crate::error::AppError;
 use anyhow::Result;
 
-#[derive(Debug, Clone)]
 pub struct Config {
+    pub user_token: String,
     pub phpsessid: String,
     pub output_dir: String,
 }
@@ -188,10 +182,12 @@ impl Config {
     pub fn load() -> Result<Self> {
         dotenvy::dotenv().ok();
 
+        let user_token = Self::load_mandatory_var("TAINIX_USER_TOKEN")?;
         let phpsessid = Self::load_mandatory_var("TAINIX_PHPSESSID")?;
         let output_dir = std::env::var("TAINIX_OUTPUT_DIR").unwrap_or_else(|_| "challenges".into());
 
         Ok(Self {
+            user_token,
             phpsessid,
             output_dir,
         })
@@ -214,7 +210,7 @@ impl Config {
 }
 ```
 
-## File 6: .\src\error.rs
+## File 7: .\src\error.rs
 
 ```rs
 use thiserror::Error;
@@ -227,6 +223,9 @@ pub enum AppError {
     #[error("Tainix API request failed: {0}")]
     Request(#[from] reqwest::Error),
 
+    #[error("Tainix API error: {0}")]
+    Api(String),
+
     #[error("Failed to parse HTML content: {0}")]
     Parsing(String),
 
@@ -235,14 +234,16 @@ pub enum AppError {
 }
 ```
 
-## File 7: .\src\main.rs
+## File 8: .\src\main.rs
 
 ```rs
 mod cli;
 mod commands;
 mod config;
 mod error;
+mod scaffolding;
 mod tainix;
+mod templating;
 
 use anyhow::Result;
 use clap::Parser;
@@ -254,7 +255,6 @@ use config::Config;
 #[tokio::main]
 async fn main() -> Result<()> {
     let config = Config::load()?;
-
     let cli = Cli::parse();
 
     match cli.command {
@@ -267,31 +267,62 @@ async fn main() -> Result<()> {
 }
 ```
 
-## File 8: .\src\tainix\client.rs
+## File 9: .\src\scaffolding.rs
+
+```rs
+use anyhow::{Context, Result};
+use std::fs;
+use std::path::Path;
+
+/// Creates the challenge directory and writes the TypeScript file.
+pub fn write_challenge_file(output_dir: &str, challenge_code: &str, content: &str) -> Result<()> {
+    let folder_path = Path::new(output_dir).join(challenge_code);
+    fs::create_dir_all(&folder_path)
+        .with_context(|| format!("Failed to create directory: {}", folder_path.display()))?;
+
+    let file_path = folder_path.join(format!("{}.ts", challenge_code));
+    fs::write(&file_path, content).with_context(|| {
+        format!(
+            "Failed to write TypeScript file to: {}",
+            file_path.display()
+        )
+    })?;
+
+    println!(
+        "✅ Successfully generated project in '{}'",
+        folder_path.display()
+    );
+    Ok(())
+}
+```
+
+## File 10: .\src\tainix\client.rs
 
 ```rs
 use crate::config::Config;
 use crate::error::AppError;
+use crate::tainix::models::ChallengeInputData;
 use reqwest::header;
 
 const TAINIX_BASE_URL: &str = "https://tainix.fr";
 
-pub struct TainixClient {
+pub struct TainixClient<'a> {
     client: reqwest::Client,
-    config: Config,
+    config: &'a Config,
 }
 
-impl TainixClient {
-    /// Creates a new Tainix API client.
-    pub fn new(config: Config) -> Self {
+impl<'a> TainixClient<'a> {
+    pub fn new(config: &'a Config) -> Self {
         Self {
             client: reqwest::Client::new(),
             config,
         }
     }
 
-    /// Fetches the raw HTML for a given challenge page.
-    pub async fn fetch_challenge_page(&self, challenge_name: &str) -> Result<String, AppError> {
+    pub async fn fetch_challenge_data_page(
+        &self,
+        challenge_name: &str,
+    ) -> Result<String, AppError> {
         let url = format!("{}/challenge/{}", TAINIX_BASE_URL, challenge_name);
         let cookie_value = format!("PHPSESSID={}", self.config.phpsessid);
 
@@ -314,10 +345,38 @@ impl TainixClient {
 
         Ok(html)
     }
+
+    pub async fn fetch_challenge_input_data(
+        &self,
+        challenge_code: &str,
+    ) -> Result<ChallengeInputData, AppError> {
+        let url = format!(
+            "{}/api/games/start/{}/{}",
+            TAINIX_BASE_URL, self.config.user_token, challenge_code
+        );
+
+        println!("Fetching challenge input data from URL: {}", url);
+        let input_data: ChallengeInputData = self
+            .client
+            .get(&url)
+            .send()
+            .await?
+            .error_for_status()?
+            .json()
+            .await?;
+
+        if !input_data.success {
+            return Err(AppError::Api(
+                "Failed to fetch challenge input data. Your TAINIX_USER_TOKEN may be invalid or expired.".to_string(),
+            ));
+        }
+
+        Ok(input_data)
+    }
 }
 ```
 
-## File 9: .\src\tainix\mod.rs
+## File 11: .\src\tainix\mod.rs
 
 ```rs
 pub mod client;
@@ -325,19 +384,40 @@ pub mod models;
 pub mod parser;
 ```
 
-## File 10: .\src\tainix\models.rs
+## File 12: .\src\tainix\models.rs
 
 ```rs
-#[derive(Debug, Default)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ChallengeData {
+    pub details: ChallengeDetails,
+    pub input_data: ChallengeInputData,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ChallengeDetails {
+    pub challenge_name: String,
     pub challenge_code: String,
     pub example_input: Option<String>,
     pub expected_output: Option<String>,
     pub steps: Vec<String>,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ChallengeInputData {
+    pub input: ChallengeInput,
+    pub token: String,
+    pub success: bool,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ChallengeInput {
+    pub values: Vec<i32>,
+}
 ```
 
-## File 11: .\src\tainix\parser.rs
+## File 13: .\src\tainix\parser.rs
 
 ```rs
 use crate::error::AppError;
@@ -345,11 +425,14 @@ use crate::tainix::models::ChallengeDetails;
 use regex::Regex;
 use scraper::{Element, Html, Selector};
 
-/// Parses the HTML of a challenge page to extract key details.
-pub fn parse_challenge_page(html_content: &str) -> Result<ChallengeDetails, AppError> {
+pub fn parse_challenge_page(
+    challenge_name: &str,
+    html_content: &str,
+) -> Result<ChallengeDetails, AppError> {
     let document = Html::parse_document(html_content);
 
     let details = ChallengeDetails {
+        challenge_name: challenge_name.to_string(),
         challenge_code: extract_challenge_code(&document)?,
         example_input: extract_example_input(&document),
         expected_output: extract_expected_output(&document),
@@ -359,7 +442,6 @@ pub fn parse_challenge_page(html_content: &str) -> Result<ChallengeDetails, AppE
     Ok(details)
 }
 
-/// Extracts the challenge code (e.g., "CHALLENGECODE") from the sandbox link.
 fn extract_challenge_code(document: &Html) -> Result<String, AppError> {
     let selector = Selector::parse("a[href*='/sandbox/play/']")
         .map_err(|_| AppError::Parsing("Failed to parse selector".into()))?;
@@ -372,7 +454,6 @@ fn extract_challenge_code(document: &Html) -> Result<String, AppError> {
         .ok_or_else(|| AppError::Parsing("Failed to extract challenge code".into()))
 }
 
-/// Extracts the example JSON input from the designated div.
 fn extract_example_input(document: &Html) -> Option<String> {
     let selector = Selector::parse("div.format.format-json").ok()?;
     document
@@ -381,7 +462,6 @@ fn extract_example_input(document: &Html) -> Option<String> {
         .map(|el| el.text().collect::<String>().trim().to_string())
 }
 
-/// Extracts the expected response text that follows the "Réponse attendue" header.
 fn extract_expected_output(document: &Html) -> Option<String> {
     let selector = Selector::parse("p.h3.mt-4").ok()?;
 
@@ -393,7 +473,6 @@ fn extract_expected_output(document: &Html) -> Option<String> {
         .map(|p| p.text().collect::<String>().trim().to_string())
 }
 
-/// Extracts the step-by-step instructions.
 fn extract_steps(document: &Html) -> Option<Vec<String>> {
     let h3_selector = Selector::parse("p.h3.mt-4").ok()?;
 
@@ -424,7 +503,86 @@ fn extract_steps(document: &Html) -> Option<Vec<String>> {
 }
 ```
 
-## File 12: .\tainix-api-analysis\game.js
+## File 14: .\src\templates\challenge.ts
+
+```ts
+/**
+ * Tainix Challenge: {{ data.details.challenge_name }} [{{ data.details.challenge_code }}]
+ *
+ * Problem:
+ * You can find the problem description on the Tainix website.
+ *
+{%- if data.details.steps %}
+ * Steps:
+{%- for step in data.details.steps %}
+ * - {{ step }}
+{%- endfor %}
+{%- else %}
+ * No steps found for this challenge.
+{%- endif %}
+ */
+
+// Example of the data you will receive:
+const exampleData = {{ example_input | safe }};
+
+// --- Your implementation below ---
+
+function solve(data: typeof exampleData): string | number {
+  console.log('Received data:', data);
+  
+  // TODO: Implement your solution here
+  const result = 0;
+  
+  return result;
+}
+
+// --- Tests ---
+
+const result = solve(exampleData);
+console.log(`Your result is: ${result}`);
+
+const expectedOutput = `{{ data.details.expected_output | default(value="") }}`;
+console.log(`Expected output is: ${expectedOutput}`);
+
+if (String(result) === String(expectedOutput)) {
+    console.log("✅ Success!");
+} else {
+    console.log("❌ Failed!");
+}
+```
+
+## File 15: .\src\templating.rs
+
+```rs
+use crate::tainix::models::ChallengeData;
+use lazy_static::lazy_static;
+use tera::{Context, Tera};
+
+lazy_static! {
+    pub static ref TEMPLATES: Tera = {
+        let mut tera = Tera::default();
+        tera.add_raw_template("challenge.ts", include_str!("templates/challenge.ts"))
+            .expect("Failed to parse embedded template");
+        tera
+    };
+}
+
+pub fn render_ts_template(data: &ChallengeData) -> Result<String, tera::Error> {
+    let mut context = Context::new();
+    context.insert("data", &data.details);
+
+    let example_input = data
+        .details
+        .example_input
+        .as_deref()
+        .unwrap_or("{\n  \"message\": \"Could not parse example input\"\n}");
+    context.insert("example_input", example_input);
+
+    TEMPLATES.render("challenge.ts", &context)
+}
+```
+
+## File 16: .\tainix-api-analysis\game.js
 
 ```js
 class Game {
@@ -562,7 +720,7 @@ class Game {
 }
 ```
 
-## File 13: .\tainix-api-analysis\notes.md
+## File 17: .\tainix-api-analysis\notes.md
 
 ```md
 # Tainix API analysis

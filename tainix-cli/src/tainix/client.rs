@@ -1,6 +1,6 @@
 use crate::config::Config;
 use crate::error::AppError;
-use crate::tainix::models::{ChallengeInput, ChallengeInputData};
+use crate::tainix::models::ChallengeInputData;
 use reqwest::header;
 
 const TAINIX_BASE_URL: &str = "https://tainix.fr";
@@ -47,11 +47,11 @@ impl<'a> TainixClient<'a> {
 
     pub async fn fetch_challenge_input_data(
         &self,
-        challenge_name: &str,
+        challenge_code: &str,
     ) -> Result<ChallengeInputData, AppError> {
         let url = format!(
             "{}/api/games/start/{}/{}",
-            TAINIX_BASE_URL, self.config.user_token, challenge_name
+            TAINIX_BASE_URL, self.config.user_token, challenge_code
         );
 
         let input_data: ChallengeInputData = self

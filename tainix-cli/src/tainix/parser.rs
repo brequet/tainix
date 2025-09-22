@@ -2,6 +2,7 @@ use crate::error::AppError;
 use crate::tainix::models::ChallengeDetails;
 use regex::Regex;
 use scraper::{Element, Html, Selector};
+use serde_json;
 
 pub fn parse_challenge_page(
     challenge_name: &str,
@@ -32,12 +33,12 @@ fn extract_challenge_code(document: &Html) -> Result<String, AppError> {
         .ok_or_else(|| AppError::Parsing("Failed to extract challenge code".into()))
 }
 
-fn extract_example_input(document: &Html) -> Option<String> {
+fn extract_example_input(document: &Html) -> Option<serde_json::Value> {
     let selector = Selector::parse("div.format.format-json").ok()?;
-    document
-        .select(&selector)
-        .next()
-        .map(|el| el.text().collect::<String>().trim().to_string())
+    document.select(&selector).next().and_then(|el| {
+        let text = el.text().collect::<String>();
+        serde_json::from_str(&text).ok()
+    })
 }
 
 fn extract_expected_output(document: &Html) -> Option<String> {

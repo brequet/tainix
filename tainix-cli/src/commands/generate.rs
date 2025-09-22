@@ -22,7 +22,7 @@ pub async fn handle_generate(challenge_name: String, config: &Config) -> Result<
     println!("Successfully parsed challenge details.");
 
     let input_data = client
-        .fetch_challenge_input_data(&challenge_name)
+        .fetch_challenge_input_data(&details.challenge_code)
         .await
         .context("Failed to fetch challenge input data")?;
 

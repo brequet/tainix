@@ -1898,6 +1898,7 @@ dependencies = [
  "reqwest",
  "scraper",
  "serde",
+ "serde_json",
  "tera",
  "thiserror",
  "tokio",
