@@ -23,13 +23,11 @@ pub fn write_challenge_file(output_dir: &str, challenge_code: &str, content: &st
         file_path.display()
     );
 
-    println!("You can test it using:\n\tainix test {}", challenge_code);
-
     Ok(())
 }
 
 /// Helper to get the path to a challenge's folder.
-fn get_challenge_folder_path(challenge_code: &str, output_dir: &str) -> PathBuf {
+pub fn get_challenge_folder_path(challenge_code: &str, output_dir: &str) -> PathBuf {
     let stripped_challenge_code = challenge_code.split('_').next().unwrap_or(challenge_code);
     Path::new(output_dir).join(stripped_challenge_code)
 }

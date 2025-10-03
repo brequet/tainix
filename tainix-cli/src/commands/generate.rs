@@ -1,5 +1,7 @@
+use std::path::PathBuf;
+
 use crate::config::Config;
-use crate::scaffolding::write_challenge_file;
+use crate::scaffolding::{get_challenge_file_path, write_challenge_file};
 use crate::tainix::models::ChallengeData;
 use crate::tainix::{client::TainixClient, parser::parse_challenge_page};
 use crate::templating::render_ts_template;
@@ -39,6 +41,31 @@ pub async fn handle_generate(challenge_name: String, config: &Config) -> Result<
         &ts_content,
     )
     .context("Failed to write project files")?;
+
+    println!(
+        "You can test it using:\n\ttainix test {}",
+        data.details.challenge_code
+    );
+
+    let _ = get_challenge_file_path(&data.details.challenge_code, &config.output_dir)
+        .and_then(open_editor);
+
+    Ok(())
+}
+
+fn open_editor(challenge_file_path: PathBuf) -> Result<()> {
+    let status = std::process::Command::new("cmd")
+        .arg("/C")
+        .arg("code")
+        .arg(challenge_file_path)
+        .status();
+
+    let status = status
+        .context("Failed to execute 'code' command. Is VS Code installed and in your PATH?")?;
+
+    if !status.success() {
+        println!("Warning: 'code' command finished with a non-zero status.");
+    }
 
     Ok(())
 }

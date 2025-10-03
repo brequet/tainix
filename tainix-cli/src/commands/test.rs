@@ -15,7 +15,6 @@ pub async fn handle_test(challenge_code: String, config: &Config) -> Result<()> 
         anyhow::bail!("Challenge file not found at: {}", ts_file_path.display());
     }
 
-    // Execute the node command and stream its output
     let mut child = Command::new("node")
         .arg(&ts_file_path)
         .arg("test")
@@ -31,9 +30,13 @@ pub async fn handle_test(challenge_code: String, config: &Config) -> Result<()> 
         .wait()
         .context("Failed to wait for node process to finish")?;
 
-    if !status.success() {
-        anyhow::bail!("Test execution failed.");
+    if status.success() {
+        println!(
+            "\nRun this command to submit your solution:\n\ntainix submit {}\n",
+            challenge_code
+        );
+        Ok(())
+    } else {
+        anyhow::bail!("Test execution reported a failure.");
     }
-
-    Ok(())
 }

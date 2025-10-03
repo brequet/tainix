@@ -2,6 +2,10 @@
  * Tainix Challenge: {{ details.challenge_name }} [{{ details.challenge_code }}]
  * 
  * Challenge Token: {{ input_data.token }}
+ * 
+ * Commands:
+ * tainix test {{ details.challenge_code }}
+ * tainix submit {{ details.challenge_code }}
  */
 
 const inputData = {{ input | safe }};
