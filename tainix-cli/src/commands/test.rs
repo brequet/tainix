@@ -1,6 +1,8 @@
+use super::submit::handle_submit;
 use crate::config::Config;
 use crate::scaffolding::get_challenge_file_path;
 use anyhow::{Context, Result};
+use std::io::{self, Write};
 use std::process::Command;
 
 /// Main handler for the 'test' command.
@@ -31,11 +33,28 @@ pub async fn handle_test(challenge_code: String, config: &Config) -> Result<()> 
         .context("Failed to wait for node process to finish")?;
 
     if status.success() {
-        println!(
-            "\nRun this command to submit your solution:\n\ntainix submit {}\n",
-            challenge_code
-        );
-        Ok(())
+        // Test passed, now prompt the user for submission
+        print!("\nDo you want to submit the solution now? (y/N) ");
+        io::stdout().flush().context("Failed to flush stdout")?;
+
+        let mut input = String::new();
+        io::stdin()
+            .read_line(&mut input)
+            .context("Failed to read user input")?;
+
+        println!(); // Add a newline for better formatting
+
+        if input.trim().eq_ignore_ascii_case("y") || input.trim().eq_ignore_ascii_case("yes") {
+            // User confirmed, call the submit handler directly.
+            handle_submit(challenge_code, config).await
+        } else {
+            // User declined or entered something else.
+            println!(
+                "Submission skipped. You can run this command to submit later:\n\ntainix submit {}\n",
+                challenge_code
+            );
+            Ok(())
+        }
     } else {
         anyhow::bail!("Test execution reported a failure.");
     }
