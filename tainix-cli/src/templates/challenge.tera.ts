@@ -1,5 +1,7 @@
 /**
  * Tainix Challenge: {{ details.challenge_name }} [{{ details.challenge_code }}]
+ * 
+ * Challenge Token: {{ input_data.token }}
  */
 
 const inputData = {{ input | safe }};
@@ -14,9 +16,9 @@ function solve({ {{ data_keys | join(sep=", ") }} }: InputData): string {
 
 // --- Tests ---
 function test(): void {
-  /*
+ /*
    * Problem Steps:
-   {%- if details.steps and details.steps is not empty %}
+   {%- if details.steps %}
    {%- for step in details.steps %}
    * - {{ step }}
    {%- endfor %}
@@ -51,7 +53,7 @@ function getCommandFromArgs(): Command {
   const validCommands: Command[] = [{% for command in commands %}"{{ command }}"{% if not loop.last %}, {% endif %}{% endfor %}];
 
   // Best Practice: Check if the command is valid in a dynamic way.
-  if ((validCommands as readonly string[]).includes(cmd)) {
+  if (validCommands.includes(cmd)) {
     return cmd as Command;
   }
 

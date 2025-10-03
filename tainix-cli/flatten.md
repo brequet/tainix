@@ -1,26 +1,25 @@
 # Flattened Codebase
 
-Total files: 17
+Total files: 16
 
 ## Table of Contents
 
 1. [.\Cargo.toml](#file-1)
-2. [.\challenges\DETECTIVE\DETECTIVE.ts](#file-2)
-3. [.\src\cli.rs](#file-3)
-4. [.\src\commands\generate.rs](#file-4)
-5. [.\src\commands\mod.rs](#file-5)
-6. [.\src\config.rs](#file-6)
-7. [.\src\error.rs](#file-7)
-8. [.\src\main.rs](#file-8)
-9. [.\src\scaffolding.rs](#file-9)
-10. [.\src\tainix\client.rs](#file-10)
-11. [.\src\tainix\mod.rs](#file-11)
-12. [.\src\tainix\models.rs](#file-12)
-13. [.\src\tainix\parser.rs](#file-13)
-14. [.\src\templates\challenge.ts](#file-14)
-15. [.\src\templating.rs](#file-15)
-16. [.\tainix-api-analysis\game.js](#file-16)
-17. [.\tainix-api-analysis\notes.md](#file-17)
+2. [.\src\cli.rs](#file-2)
+3. [.\src\commands\generate.rs](#file-3)
+4. [.\src\commands\mod.rs](#file-4)
+5. [.\src\config.rs](#file-5)
+6. [.\src\error.rs](#file-6)
+7. [.\src\main.rs](#file-7)
+8. [.\src\scaffolding.rs](#file-8)
+9. [.\src\tainix\client.rs](#file-9)
+10. [.\src\tainix\mod.rs](#file-10)
+11. [.\src\tainix\models.rs](#file-11)
+12. [.\src\tainix\parser.rs](#file-12)
+13. [.\src\templates\challenge.tera.ts](#file-13)
+14. [.\src\templating.rs](#file-14)
+15. [.\tainix-api-analysis\game.js](#file-15)
+16. [.\tainix-api-analysis\notes.md](#file-16)
 
 ## File 1: .\Cargo.toml
 
@@ -45,48 +44,7 @@ thiserror = "2.0.16"
 tokio = { version = "1.47.1", features = ["full"] }
 ```
 
-## File 2: .\challenges\DETECTIVE\DETECTIVE.ts
-
-```ts
-/**
- * Tainix Challenge: meurtre-syntheria (DETECTIVE)
- *
- * Problem:
- * You can find the problem description on the Tainix website.
- *
- * No steps found for this challenge.
- */
-
-// Example of the data you will receive:
-const exampleData = {"indices":["taille_is_petit","poids_is_enrobe","poids_not_mince","cheveux_is_chatain","yeux_is_vairons"],"suspects":["nom:Sylvie,yeux:vairons,cheveux:chatain,taille:petit,poids:enrobe","nom:Rachida,yeux:vairons,cheveux:blanc,taille:moyen,poids:enrobe","nom:Alix,yeux:noir,cheveux:bleu,taille:petit,poids:moyen","nom:Mohamed,yeux:bleus,cheveux:roux,taille:petit,poids:enrobe","nom:Fatou,yeux:noir,cheveux:vert,taille:grand,poids:enrobe"]};
-
-// --- Your implementation below ---
-
-function solve(data: typeof exampleData): string | number {
-  console.log('Received data:', data);
-  
-  // TODO: Implement your solution here
-  const result = 0;
-  
-  return result;
-}
-
-// --- Tests ---
-
-const result = solve(exampleData);
-console.log(`Your result is: ${result}`);
-
-const expectedOutput = `Sylvie_4`;
-console.log(`Expected output is: ${expectedOutput}`);
-
-if (String(result) === String(expectedOutput)) {
-    console.log("✅ Success!");
-} else {
-    console.log("❌ Failed!");
-}
-```
-
-## File 3: .\src\cli.rs
+## File 2: .\src\cli.rs
 
 ```rs
 use clap::{Parser, Subcommand};
@@ -110,7 +68,7 @@ pub enum Commands {
 }
 ```
 
-## File 4: .\src\commands\generate.rs
+## File 3: .\src\commands\generate.rs
 
 ```rs
 use crate::config::Config;
@@ -159,13 +117,13 @@ pub async fn handle_generate(challenge_name: String, config: &Config) -> Result<
 }
 ```
 
-## File 5: .\src\commands\mod.rs
+## File 4: .\src\commands\mod.rs
 
 ```rs
 pub mod generate;
 ```
 
-## File 6: .\src\config.rs
+## File 5: .\src\config.rs
 
 ```rs
 use crate::error::AppError;
@@ -210,7 +168,7 @@ impl Config {
 }
 ```
 
-## File 7: .\src\error.rs
+## File 6: .\src\error.rs
 
 ```rs
 use thiserror::Error;
@@ -234,7 +192,7 @@ pub enum AppError {
 }
 ```
 
-## File 8: .\src\main.rs
+## File 7: .\src\main.rs
 
 ```rs
 mod cli;
@@ -267,7 +225,7 @@ async fn main() -> Result<()> {
 }
 ```
 
-## File 9: .\src\scaffolding.rs
+## File 8: .\src\scaffolding.rs
 
 ```rs
 use anyhow::{Context, Result};
@@ -276,7 +234,9 @@ use std::path::Path;
 
 /// Creates the challenge directory and writes the TypeScript file.
 pub fn write_challenge_file(output_dir: &str, challenge_code: &str, content: &str) -> Result<()> {
-    let folder_path = Path::new(output_dir).join(challenge_code);
+    let stripped_challenge_code = challenge_code.split("_").next().unwrap_or(challenge_code);
+
+    let folder_path = Path::new(output_dir).join(stripped_challenge_code);
     fs::create_dir_all(&folder_path)
         .with_context(|| format!("Failed to create directory: {}", folder_path.display()))?;
 
@@ -296,7 +256,7 @@ pub fn write_challenge_file(output_dir: &str, challenge_code: &str, content: &st
 }
 ```
 
-## File 10: .\src\tainix\client.rs
+## File 9: .\src\tainix\client.rs
 
 ```rs
 use crate::config::Config;
@@ -355,7 +315,6 @@ impl<'a> TainixClient<'a> {
             TAINIX_BASE_URL, self.config.user_token, challenge_code
         );
 
-        println!("Fetching challenge input data from URL: {}", url);
         let input_data: ChallengeInputData = self
             .client
             .get(&url)
@@ -376,7 +335,7 @@ impl<'a> TainixClient<'a> {
 }
 ```
 
-## File 11: .\src\tainix\mod.rs
+## File 10: .\src\tainix\mod.rs
 
 ```rs
 pub mod client;
@@ -384,10 +343,12 @@ pub mod models;
 pub mod parser;
 ```
 
-## File 12: .\src\tainix\models.rs
+## File 11: .\src\tainix\models.rs
 
 ```rs
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use std::collections::HashMap;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ChallengeData {
@@ -399,31 +360,27 @@ pub struct ChallengeData {
 pub struct ChallengeDetails {
     pub challenge_name: String,
     pub challenge_code: String,
-    pub example_input: Option<String>,
+    pub example_input: Option<Value>,
     pub expected_output: Option<String>,
     pub steps: Vec<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ChallengeInputData {
-    pub input: ChallengeInput,
+    pub input: HashMap<String, Value>,
     pub token: String,
     pub success: bool,
 }
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct ChallengeInput {
-    pub values: Vec<i32>,
-}
 ```
 
-## File 13: .\src\tainix\parser.rs
+## File 12: .\src\tainix\parser.rs
 
 ```rs
 use crate::error::AppError;
 use crate::tainix::models::ChallengeDetails;
 use regex::Regex;
 use scraper::{Element, Html, Selector};
+use serde_json;
 
 pub fn parse_challenge_page(
     challenge_name: &str,
@@ -454,12 +411,12 @@ fn extract_challenge_code(document: &Html) -> Result<String, AppError> {
         .ok_or_else(|| AppError::Parsing("Failed to extract challenge code".into()))
 }
 
-fn extract_example_input(document: &Html) -> Option<String> {
+fn extract_example_input(document: &Html) -> Option<serde_json::Value> {
     let selector = Selector::parse("div.format.format-json").ok()?;
-    document
-        .select(&selector)
-        .next()
-        .map(|el| el.text().collect::<String>().trim().to_string())
+    document.select(&selector).next().and_then(|el| {
+        let text = el.text().collect::<String>();
+        serde_json::from_str(&text).ok()
+    })
 }
 
 fn extract_expected_output(document: &Html) -> Option<String> {
@@ -474,24 +431,31 @@ fn extract_expected_output(document: &Html) -> Option<String> {
 }
 
 fn extract_steps(document: &Html) -> Option<Vec<String>> {
-    let h3_selector = Selector::parse("p.h3.mt-4").ok()?;
+    // 1. Use a more general selector to find ANY <p> tag.
+    let p_selector = Selector::parse("p").ok()?;
 
-    // 1. Find the paragraph containing the steps by locating its header first
+    // 2. Find the header <p>, get its next sibling element which should be the steps <p>.
     let steps_html = document
-        .select(&h3_selector)
+        // Select all paragraphs
+        .select(&p_selector)
+        // Find the one that contains our header text
         .find(|el| {
             el.text()
-                .any(|text| text.contains("Déroulé étape par étape"))
+                .any(|text| text.trim() == "Déroulé étape par étape")
         })
+        // Get the next ELEMENT node, skipping over any whitespace/text nodes
         .and_then(|el| el.next_sibling_element())
+        // Make sure this sibling is also a <p> tag
         .filter(|sibling| sibling.value().name() == "p")
+        // If all checks pass, get its inner HTML
         .map(|p| p.inner_html())?;
 
-    // 2. Use a regex to strip all HTML tags (`<span>`, `<br>`, etc.) from the inner content.
+    // 3. Use regex to strip all HTML tags (`<span>`, `<br>`, etc.).
+    // This regex is good, it will remove any tag.
     let tag_stripper = Regex::new(r"<[^>]*>").ok()?;
     let cleaned_text = tag_stripper.replace_all(&steps_html, "");
 
-    // 3. The steps are separated by "&nbsp;". We split the cleaned text by this entity.
+    // 4. The steps are separated by "&nbsp;". We split the cleaned text by this entity.
     let steps: Vec<String> = cleaned_text
         .split("&nbsp;")
         .map(|s| s.trim()) // Clean up leading/trailing whitespace
@@ -503,86 +467,153 @@ fn extract_steps(document: &Html) -> Option<Vec<String>> {
 }
 ```
 
-## File 14: .\src\templates\challenge.ts
+## File 13: .\src\templates\challenge.tera.ts
 
 ```ts
 /**
- * Tainix Challenge: {{ data.details.challenge_name }} [{{ data.details.challenge_code }}]
- *
- * Problem:
- * You can find the problem description on the Tainix website.
- *
-{%- if data.details.steps %}
- * Steps:
-{%- for step in data.details.steps %}
- * - {{ step }}
-{%- endfor %}
-{%- else %}
- * No steps found for this challenge.
-{%- endif %}
+ * Tainix Challenge: {{ details.challenge_name }} [{{ details.challenge_code }}]
+ * 
+ * Challenge Token: {{ input_data.token }}
  */
 
-// Example of the data you will receive:
-const exampleData = {{ example_input | safe }};
+const inputData = {{ input | safe }};
 
-// --- Your implementation below ---
+type InputData = typeof inputData;
 
-function solve(data: typeof exampleData): string | number {
-  console.log('Received data:', data);
-  
-  // TODO: Implement your solution here
-  const result = 0;
-  
+// INSTRUCTIONS: use vars to destructure the input data
+function solve({ {{ data_keys | join(sep=", ") }} }: InputData): string {
+  const result = "";
   return result;
 }
 
 // --- Tests ---
+function test(): void {
+ /*
+   * Problem Steps:
+   {%- if details.steps %}
+   {%- for step in details.steps %}
+   * - {{ step }}
+   {%- endfor %}
+   {%- else %}
+   * No steps found for this challenge.
+   {%- endif %}
+   */
+  const testingData = {{ example_input | safe }};
+  const expected = {{ expected_output | safe }}; // Already a JSON string from Rust
+  const result = solve(testingData);
 
-const result = solve(exampleData);
-console.log(`Your result is: ${result}`);
+  if (result !== expected) {
+    console.log(`❌ Test failed:
+        - Expected: '${expected}'
+        - Got:      '${result}'
+    `);
+  } else {
+    console.log(`✅ Test passed! Got the expected result: ${expected}`);
+  }
+}
 
-const expectedOutput = `{{ data.details.expected_output | default(value="") }}`;
-console.log(`Expected output is: ${expectedOutput}`);
+// --- Command Handling ---
+// The 'Command' type is dynamically generated from the list provided by Rust.
+type Command = {% for command in commands %}"{{ command }}"{% if not loop.last %} | {% endif %}{% endfor %};
 
-if (String(result) === String(expectedOutput)) {
-    console.log("✅ Success!");
+function getCommandFromArgs(): Command {
+  if (process.argv.length < 3) {
+    return "run"; // Default command
+  }
+
+  const cmd = process.argv[2];
+  const validCommands: Command[] = [{% for command in commands %}"{{ command }}"{% if not loop.last %}, {% endif %}{% endfor %}];
+
+  // Best Practice: Check if the command is valid in a dynamic way.
+  if (validCommands.includes(cmd)) {
+    return cmd as Command;
+  }
+
+  console.log(`Invalid command: '${cmd}'. Defaulting to 'run'.`);
+  return "run";
+}
+
+const command = getCommandFromArgs();
+
+if (command === "test") {
+  test();
 } else {
-    console.log("❌ Failed!");
+  const result = solve(inputData);
+  console.log(`Challenge result is: ${result}`);
 }
 ```
 
-## File 15: .\src\templating.rs
+## File 14: .\src\templating.rs
 
 ```rs
-use crate::tainix::models::ChallengeData;
+use crate::tainix::models::ChallengeData; // Assuming your models are in this path
 use lazy_static::lazy_static;
+use serde_json;
 use tera::{Context, Tera};
 
 lazy_static! {
     pub static ref TEMPLATES: Tera = {
         let mut tera = Tera::default();
-        tera.add_raw_template("challenge.ts", include_str!("templates/challenge.ts"))
-            .expect("Failed to parse embedded template");
+        tera.add_raw_template(
+            "challenge.tera.ts",
+            include_str!("templates/challenge.tera.ts"),
+        )
+        .expect("Failed to parse embedded template");
         tera
     };
 }
 
 pub fn render_ts_template(data: &ChallengeData) -> Result<String, tera::Error> {
     let mut context = Context::new();
-    context.insert("data", &data.details);
 
-    let example_input = data
+    // --- Core Data ---
+    context.insert("details", &data.details);
+
+    context.insert("input_data", &data.input_data);
+
+    // --- Input & Testing Data ---
+    // Serialize data to a pretty JSON string for readability in the generated file.
+    let input_str =
+        serde_json::to_string_pretty(&data.input_data.input).unwrap_or_else(|_| "{}".to_string());
+    context.insert("input", &input_str);
+
+    let example_input_val = data
         .details
         .example_input
-        .as_deref()
-        .unwrap_or("{\n  \"message\": \"Could not parse example input\"\n}");
-    context.insert("example_input", example_input);
+        .clone()
+        .unwrap_or(serde_json::Value::Null);
+    let example_input_str =
+        serde_json::to_string_pretty(&example_input_val).unwrap_or_else(|_| "{}".to_string());
+    context.insert("example_input", &example_input_str);
 
-    TEMPLATES.render("challenge.ts", &context)
+    // --- Dynamic Destructuring Keys ---
+    // Extract keys from the example_input to generate the destructured function signature.
+    // This assumes the main input and example input share the same structure.
+    let data_keys: Vec<String> = if let Some(obj) = example_input_val.as_object() {
+        obj.keys().cloned().collect()
+    } else {
+        Vec::new()
+    };
+    context.insert("data_keys", &data_keys);
+
+    // --- Dynamic Command Handling ---
+    // This list can be extended in the future without changing the template.
+    let commands = vec!["test", "run"];
+    context.insert("commands", &commands);
+
+    // --- Expected Output for Testing ---
+    // Serialize to a JSON string to handle all escaping and quoting automatically.
+    let expected_output_str =
+        serde_json::to_string(&data.details.expected_output.clone().unwrap_or_default())
+            .unwrap_or_else(|_| "\"\"".to_string());
+    context.insert("expected_output", &expected_output_str);
+
+    // --- Render the Final Template ---
+    TEMPLATES.render("challenge.tera.ts", &context)
 }
 ```
 
-## File 16: .\tainix-api-analysis\game.js
+## File 15: .\tainix-api-analysis\game.js
 
 ```js
 class Game {
@@ -720,7 +751,7 @@ class Game {
 }
 ```
 
-## File 17: .\tainix-api-analysis\notes.md
+## File 16: .\tainix-api-analysis\notes.md
 
 ```md
 # Tainix API analysis

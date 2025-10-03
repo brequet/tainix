@@ -53,24 +53,31 @@ fn extract_expected_output(document: &Html) -> Option<String> {
 }
 
 fn extract_steps(document: &Html) -> Option<Vec<String>> {
-    let h3_selector = Selector::parse("p.h3.mt-4").ok()?;
+    // 1. Use a more general selector to find ANY <p> tag.
+    let p_selector = Selector::parse("p").ok()?;
 
-    // 1. Find the paragraph containing the steps by locating its header first
+    // 2. Find the header <p>, get its next sibling element which should be the steps <p>.
     let steps_html = document
-        .select(&h3_selector)
+        // Select all paragraphs
+        .select(&p_selector)
+        // Find the one that contains our header text
         .find(|el| {
             el.text()
-                .any(|text| text.contains("Déroulé étape par étape"))
+                .any(|text| text.trim() == "Déroulé étape par étape")
         })
+        // Get the next ELEMENT node, skipping over any whitespace/text nodes
         .and_then(|el| el.next_sibling_element())
+        // Make sure this sibling is also a <p> tag
         .filter(|sibling| sibling.value().name() == "p")
+        // If all checks pass, get its inner HTML
         .map(|p| p.inner_html())?;
 
-    // 2. Use a regex to strip all HTML tags (`<span>`, `<br>`, etc.) from the inner content.
+    // 3. Use regex to strip all HTML tags (`<span>`, `<br>`, etc.).
+    // This regex is good, it will remove any tag.
     let tag_stripper = Regex::new(r"<[^>]*>").ok()?;
     let cleaned_text = tag_stripper.replace_all(&steps_html, "");
 
-    // 3. The steps are separated by "&nbsp;". We split the cleaned text by this entity.
+    // 4. The steps are separated by "&nbsp;". We split the cleaned text by this entity.
     let steps: Vec<String> = cleaned_text
         .split("&nbsp;")
         .map(|s| s.trim()) // Clean up leading/trailing whitespace

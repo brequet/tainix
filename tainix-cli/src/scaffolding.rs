@@ -19,8 +19,9 @@ pub fn write_challenge_file(output_dir: &str, challenge_code: &str, content: &st
     })?;
 
     println!(
-        "✅ Successfully generated project in '{}'",
-        folder_path.display()
+        "✅ Successfully generated project: '{}'",
+        file_path.display()
     );
+    // TODO: generate and print tainix run command
     Ok(())
 }

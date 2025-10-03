@@ -21,6 +21,8 @@ pub fn render_ts_template(data: &ChallengeData) -> Result<String, tera::Error> {
     // --- Core Data ---
     context.insert("details", &data.details);
 
+    context.insert("input_data", &data.input_data);
+
     // --- Input & Testing Data ---
     // Serialize data to a pretty JSON string for readability in the generated file.
     let input_str =
