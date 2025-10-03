@@ -1887,10 +1887,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "tainix-cli"
+name = "tainix"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "base64",
  "clap",
  "dotenvy",
  "lazy_static",

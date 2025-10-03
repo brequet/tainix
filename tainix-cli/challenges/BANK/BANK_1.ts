@@ -1,40 +1,53 @@
 /**
  * Tainix Challenge: Braquage-du-coffre-2 [BANK_1]
- * 
- * Challenge Token: 256ecb840d80e8ee6611564e441e88ee1c69e1c74b78da25edc81030e7378e84bb29b7740ae9d0f8
+ *
+ * Challenge Token: 548216a56c0a88ab7a1611f6c8629ff74411dbe00513adedaa098f7609f1a6db308d658de4f7979a
  */
 
 const inputData = {
-  "time": 284,
-  "actions": "BBBBBBBBBBBBBIIIIIIIIIIMMMMMMMMMMEEEEEEEEEEE",
-  "references": "B:9 I:4 M:1 E:9"
+  time: 238,
+  actions: "BBBBBBBBBBBBBBBIIIIIIIIIIIIIIMMMMMMEEEEEEE",
+  references: "B:5 I:3 M:1 E:7",
 };
 
 type InputData = typeof inputData;
 
-// INSTRUCTIONS: use vars to destructure the input data
 function solve({ actions, references, time }: InputData): string {
-  const result = "";
-  return result;
+  const pairs = references.split(" ").map((pair) => pair.split(":"));
+
+  const refs = arrayOfPairToDict(
+    pairs.map((p) => [p[0], parseInt(p[1], 10)] as [string, number])
+  );
+
+  const charCounts = stringToDictOfCharOccurrences(actions);
+
+  const weightedValues = Object.entries(charCounts).map(([letter, count]) => {
+    const refValue = refs[letter] ?? 0;
+    return refValue * count;
+  });
+
+  let res = sumUp(weightedValues);
+
+  return res < time ? `ESCAPE${time - res}` : `PRISON${res - time}`;
 }
 
 // --- Tests ---
 function test(): void {
- /*
+  /*
    * Problem Steps:
-   * - Il faut 56 de temps pour les actions "Break".
-   * - Il faut 50 de temps pour les actions "IT".
-   * - Il faut 16 de temps pour les actions "Money".
-   * - Il faut 63 de temps pour les actions "Prepare".
-   * - Ils ont donc besoin de 185 de temps et la police arrive dans 329.
-   * - Ils peuvent s'échapper ! Il leur restait 144 de temps.
+   * - Il faut 81 de temps pour les actions "Break".
+   * - Il faut 25 de temps pour les actions "IT".
+   * - Il faut 40 de temps pour les actions "Money".
+   * - Il faut 35 de temps pour les actions "Prepare".
+   * - Ils ont donc besoin de 181 de temps et la police arrive dans 324.
+   * - Ils peuvent s'échapper ! Il leur restait 143 de temps.
    */
   const testingData = {
-  "actions": "BBBBBBBIIIIIIIIIIMMMMMMMMEEEEEEE",
-  "references": "B:8 I:5 M:2 E:9",
-  "time": 329
-};
-  const expected = "ESCAPE144"; // Already a JSON string from Rust
+    actions: "BBBBBBBBBIIIIIMMMMMMMMMMEEEEE",
+    references: "B:9 I:5 M:4 E:7",
+    time: 324,
+  };
+  const expected = "ESCAPE143";
   const result = solve(testingData);
 
   if (result !== expected) {
@@ -47,19 +60,121 @@ function test(): void {
   }
 }
 
+// --- Utility Functions ---
+
+/**
+ * Creates a dictionary of character occurrences from a string.
+ * This function is case-sensitive.
+ *
+ * @param str The input string to process.
+ * @returns A record mapping each character to its occurrence count.
+ */
+export function stringToDictOfCharOccurrences(
+  str: string
+): Record<string, number> {
+  return str.split("").reduce((acc, char) => {
+    acc[char] = (acc[char] ?? 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+}
+
+/**
+ * Converts a dictionary with numeric values into an array of [key, value] pairs,
+ * sorted in descending order based on the values.
+ *
+ * @param dict The dictionary object to sort.
+ * @returns A new array of [key, value] tuples, sorted descending by value.
+ */
+export function dictionaryToSortedDescArray(
+  dict: Record<string, number>
+): [string, number][] {
+  return Object.entries(dict).sort(([, valA], [, valB]) => valB - valA);
+}
+
+/**
+ * Converts an array of key-value pairs (tuples) into a dictionary object.
+ *
+ * @param pairs An array of [key, value] tuples.
+ * @returns A new dictionary object created from the pairs.
+ */
+export function arrayOfPairToDict<T>(pairs: [string, T][]): Record<string, T> {
+  return pairs.reduce((acc, [key, value]) => {
+    acc[key] = value;
+    return acc;
+  }, {} as Record<string, T>);
+}
+
+/**
+ * Calculates the sum of all numbers in an array.
+ *
+ * @param numbers An array of numbers.
+ * @returns The total sum of the numbers.
+ */
+export function sumUp(numbers: number[]): number {
+  return numbers.reduce((acc, cur) => acc + cur, 0);
+}
+
+/**
+ * Logs an array to the console with an optional descriptive name.
+ * Returns the array unchanged to allow for method chaining.
+ *
+ * @param arr The array to log.
+ * @param arrName An optional name for the array to display in the log.
+ * @returns The original array.
+ */
+export function logArray<T>(arr: T[], arrName?: string): T[] {
+  const label = arrName ? `Logging array ${arrName}:` : "Logging array:";
+  console.log(label, arr);
+  return arr;
+}
+
+/**
+ * Sorts an array of numbers in ascending order.
+ * This function does not mutate the original array.
+ *
+ * @param arr The array of numbers to sort.
+ * @returns A new array sorted in ascending order.
+ */
+export function sortAsc(arr: number[]): number[] {
+  return [...arr].sort((a, b) => a - b);
+}
+
+/**
+ * Sorts an array of numbers in descending order.
+ * This function does not mutate the original array.
+ *
+ * @param arr The array of numbers to sort.
+ * @returns A new array sorted in descending order.
+ */
+export function sortDesc(arr: number[]): number[] {
+  return [...arr].sort((a, b) => b - a);
+}
+
+/**
+ * Logs any object to the console with an optional descriptive name.
+ * Returns the object unchanged to allow for method chaining.
+ *
+ * @param obj The object to log.
+ * @param objName An optional name for the object to display in the log.
+ * @returns The original object.
+ */
+export function logObject<T>(obj: T, objName?: string): T {
+  const label = objName ? `Logging ${objName}:` : "Logging:";
+  console.log(label, obj);
+  return obj;
+}
+
 // --- Command Handling ---
-// The 'Command' type is dynamically generated from the list provided by Rust.
 type Command = "test" | "run";
 
 function getCommandFromArgs(): Command {
   if (process.argv.length < 3) {
-    return "run"; // Default command
+    return "run";
   }
 
   const cmd = process.argv[2];
   const validCommands: Command[] = ["test", "run"];
 
-  // Best Practice: Check if the command is valid in a dynamic way.
   if (validCommands.includes(cmd)) {
     return cmd as Command;
   }

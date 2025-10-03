@@ -16,4 +16,16 @@ pub enum Commands {
         #[arg(value_name = "CHALLENGE_NAME")]
         name: String,
     },
+    /// Tests a local challenge solution by running its TypeScript file
+    Test {
+        /// The code of the challenge to test (e.g., "BANK_1")
+        #[arg(value_name = "CHALLENGE_CODE")]
+        code: String,
+    },
+    /// Submits a challenge solution to the Tainix API
+    Submit {
+        /// The code of the challenge to submit (e.g., "BANK_1")
+        #[arg(value_name = "CHALLENGE_CODE")]
+        code: String,
+    },
 }

@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 /// Creates the challenge directory and writes the TypeScript file.
 pub fn write_challenge_file(output_dir: &str, challenge_code: &str, content: &str) -> Result<()> {
@@ -22,6 +22,20 @@ pub fn write_challenge_file(output_dir: &str, challenge_code: &str, content: &st
         "✅ Successfully generated project: '{}'",
         file_path.display()
     );
-    // TODO: generate and print tainix run command
+
+    println!("You can test it using:\n\tainix test {}", challenge_code);
+
     Ok(())
+}
+
+/// Helper to get the path to a challenge's folder.
+fn get_challenge_folder_path(challenge_code: &str, output_dir: &str) -> PathBuf {
+    let stripped_challenge_code = challenge_code.split('_').next().unwrap_or(challenge_code);
+    Path::new(output_dir).join(stripped_challenge_code)
+}
+
+/// Helper to get the full path to a challenge's TypeScript file.
+pub fn get_challenge_file_path(challenge_code: &str, output_dir: &str) -> Result<PathBuf> {
+    let folder_path = get_challenge_folder_path(challenge_code, output_dir);
+    Ok(folder_path.join(format!("{}.ts", challenge_code)))
 }

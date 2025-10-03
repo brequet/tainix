@@ -1,7 +1,10 @@
 use crate::config::Config;
 use crate::error::AppError;
-use crate::tainix::models::ChallengeInputData;
+use crate::tainix::models::{ChallengeInputData, SubmissionResponse};
+use base64::Engine;
+use base64::engine::general_purpose;
 use reqwest::header;
+use serde_json::json;
 
 const TAINIX_BASE_URL: &str = "https://tainix.fr";
 
@@ -70,5 +73,41 @@ impl<'a> TainixClient<'a> {
         }
 
         Ok(input_data)
+    }
+
+    pub async fn submit_challenge_response(
+        &self,
+        game_token: &str,
+        player_response: &str,
+    ) -> Result<SubmissionResponse, AppError> {
+        let json_payload = json!({ "data": player_response });
+        let json_string = serde_json::to_string(&json_payload)
+            .map_err(|e| AppError::Api(format!("Failed to serialize response: {}", e)))?;
+
+        // This payload must be Base64 encoded.
+        let base64_encoded_response = general_purpose::STANDARD.encode(json_string);
+
+        let url = format!(
+            "{}/api/games/response/{}/{}",
+            TAINIX_BASE_URL, game_token, base64_encoded_response
+        );
+
+        let response: SubmissionResponse = self
+            .client
+            .get(&url)
+            .send()
+            .await?
+            .error_for_status()?
+            .json()
+            .await?;
+
+        if !response.success {
+            return Err(AppError::Api(format!(
+                "API indicated submission failure: {:?}",
+                response.errors.unwrap_or_default()
+            )));
+        }
+
+        Ok(response)
     }
 }

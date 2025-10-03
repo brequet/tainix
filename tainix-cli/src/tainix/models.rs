@@ -23,3 +23,13 @@ pub struct ChallengeInputData {
     pub token: String,
     pub success: bool,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SubmissionResponse {
+    pub success: bool,
+    #[serde(rename = "game_success")]
+    pub game_success: Option<bool>,
+    #[serde(rename = "game_message")]
+    pub game_message: Option<String>,
+    pub errors: Option<Vec<String>>,
+}
