@@ -1,70 +1,47 @@
 /**
- * Tainix Challenge: AlgoPark-2-la-grande-Roue [ALGOPARK_2]
+ * Tainix Challenge: Code-secret-et-enonce-secret [CRYPTO_4]
  *
- * Challenge Token: 6576dde8905447476e3ab01107cda08060ff3060369b1310e0293cc33c2f95e9aa1bf1740359a100
+ * Challenge Token: f7ed89643dee3cf5e71973867131dc04b1a60085f49bdce3ec5ed2f8992832ebab4bf4aab5aefb0f
  *
  * Commands:
- * tainix test ALGOPARK_2
- * tainix submit ALGOPARK_2
+ * tainix test CRYPTO_4
+ * tainix submit CRYPTO_4
  */
 
 const inputData = {
-  groups: [3, 2, 2, 3, 1, 3, 1, 4, 2, 2, 4, 2, 3],
+  echantillons: [
+    "8170294573261351656802419:oibbngwd",
+    "417211748627659691502:ziai",
+    "7691896332281755703973481375918401180137623:kbnpkaf",
+    "6779347671433101248:zjvrxo",
+    "49261865226682172:fuqo",
+  ],
+  code: "5474431924400314",
 };
 
 type InputData = typeof inputData;
 
-function solve({ groups }: InputData): string {
-  let currentGondolaOccupation = 0;
-
-  const gondolas: number[] = [];
-
-  for (const groupSize of groups) {
-    if (currentGondolaOccupation + groupSize > 4) {
-      // Start a new gondola
-      gondolas.push(currentGondolaOccupation);
-      currentGondolaOccupation = groupSize;
-    } else {
-      // Add to the current gondola
-      currentGondolaOccupation += groupSize;
-    }
-  }
-  if (currentGondolaOccupation > 0) {
-    gondolas.push(currentGondolaOccupation);
-  }
-
-  console.log("Gondolas occupation:", gondolas);
-
-  const totalGondolas = gondolas.length;
-  const lastGondolaOccupancy = gondolas.at(-1) ?? 0;
-
-  return `${totalGondolas}_${lastGondolaOccupancy}`;
+function solve({ code, echantillons }: InputData): string {
+  return "";
 }
 
 // --- Tests ---
 function test(): void {
   /*
    * Problem Steps:
-   * - Groupes à faire passer : 1, 2, 1, 4, 4, 1, 1
-   * - Attribution des nasselles (4 places maximum par nasselle) :
-   * - Groupe 1 de 1 personne(s) → Nouvelle nasselle 1 (total: 1/4)
-   * - Groupe 2 de 2 personne(s) → Nasselle 1 (total: 3/4)
-   * - Groupe 3 de 1 personne(s) → Nasselle 1 (total: 4/4)
-   * - Groupe 4 de 4 personne(s) → Nouvelle nasselle 2 (total: 4/4)
-   * - Groupe 5 de 4 personne(s) → Nouvelle nasselle 3 (total: 4/4)
-   * - Groupe 6 de 1 personne(s) → Nouvelle nasselle 4 (total: 1/4)
-   * - Groupe 7 de 1 personne(s) → Nasselle 4 (total: 2/4)
-   * - Nombre total de nasselles utilisées : 4
-   * - Nasselle 1 : 4/4 personnes
-   * - Nasselle 2 : 4/4 personnes
-   * - Nasselle 3 : 4/4 personnes
-   * - Nasselle 4 : 2/4 personnes
-   * - Réponse : 4 nasselles, 2 personnes dans la dernière nasselle
+   * - Pas d'indice pour ce challenge... désolé :p
    */
   const testingData = {
-    groups: [1, 2, 1, 4, 4, 1, 1],
+    code: "570177791167924758790",
+    echantillons: [
+      "4614060751102372092684064:soge",
+      "4963943220671:bhmv",
+      "579085216654145746198:eqpyk",
+      "515111597418210289809:dlwoh",
+      "537668612664988237204:wgtjc",
+    ],
   };
-  const expected = "4_2";
+  const expected = "xrpfc";
   const result = solve(testingData);
 
   if (result !== expected) {

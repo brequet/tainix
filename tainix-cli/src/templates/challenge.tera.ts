@@ -146,6 +146,18 @@ export function logObject<T>(obj: T, objName?: string): T {
   return obj;
 }
 
+/**
+ * Splits a string into an array of substrings, where each substring consists of
+ * consecutive identical characters from the original string.
+ * For example, "aaabbc" becomes ["aaa", "bb", "c"].
+ * 
+ * @param input The input string to split.
+ * @returns An array of substrings with consecutive identical characters.
+ */
+export function splitOnCharChange(input: string): string[] {
+  return input.match(/(.)\1*/g) || [];
+}
+
 // --- Command Handling ---
 type Command = {% for command in commands %}"{{ command }}"{% if not loop.last %} | {% endif %}{% endfor %};
 

@@ -1,70 +1,67 @@
 /**
- * Tainix Challenge: AlgoPark-2-la-grande-Roue [ALGOPARK_2]
+ * Tainix Challenge: WALL-E-4-un-peu-de-rangement [WALL_E_4]
  *
- * Challenge Token: 6576dde8905447476e3ab01107cda08060ff3060369b1310e0293cc33c2f95e9aa1bf1740359a100
+ * Challenge Token: 723630cb746b75c704eaf4296ad39a711467b20767dc2bc375bde0b84783e06d25a9d778ee8e8d1b
  *
  * Commands:
- * tainix test ALGOPARK_2
- * tainix submit ALGOPARK_2
+ * tainix test WALL_E_4
+ * tainix submit WALL_E_4
  */
 
 const inputData = {
-  groups: [3, 2, 2, 3, 1, 3, 1, 4, 2, 2, 4, 2, 3],
+  blocs:
+    "YYYYYYYYZZZZZZZZZRRRRRRRRRFFFFFFFFSSTTTTMMMMXXXXXWWWWWWWWYYYZZZZRRRRRRRRRFFFFFFFSSSSSTTTTTTTMMMMMMMMMXXXWWWWYYYYZZZRRRRRRRRRFFSSSSSTTTTTTTTTMMMM",
 };
 
 type InputData = typeof inputData;
 
-function solve({ groups }: InputData): string {
-  let currentGondolaOccupation = 0;
+function solve({ blocs }: InputData): string {
+  const groupedBlocks = splitOnCharChange(blocs);
 
-  const gondolas: number[] = [];
+  return groupedBlocks
+    .map((blockGroup) =>
+      blockGroup.length % 2 === 1 ? blockGroup.charAt(0) : null
+    )
+    .filter((char): char is string => char !== null)
+    .join("");
+}
 
-  for (const groupSize of groups) {
-    if (currentGondolaOccupation + groupSize > 4) {
-      // Start a new gondola
-      gondolas.push(currentGondolaOccupation);
-      currentGondolaOccupation = groupSize;
-    } else {
-      // Add to the current gondola
-      currentGondolaOccupation += groupSize;
-    }
-  }
-  if (currentGondolaOccupation > 0) {
-    gondolas.push(currentGondolaOccupation);
-  }
-
-  console.log("Gondolas occupation:", gondolas);
-
-  const totalGondolas = gondolas.length;
-  const lastGondolaOccupancy = gondolas.at(-1) ?? 0;
-
-  return `${totalGondolas}_${lastGondolaOccupancy}`;
+function splitOnCharChange(input: string): string[] {
+  return input.match(/(.)\1*/g) || [];
 }
 
 // --- Tests ---
 function test(): void {
   /*
    * Problem Steps:
-   * - Groupes à faire passer : 1, 2, 1, 4, 4, 1, 1
-   * - Attribution des nasselles (4 places maximum par nasselle) :
-   * - Groupe 1 de 1 personne(s) → Nouvelle nasselle 1 (total: 1/4)
-   * - Groupe 2 de 2 personne(s) → Nasselle 1 (total: 3/4)
-   * - Groupe 3 de 1 personne(s) → Nasselle 1 (total: 4/4)
-   * - Groupe 4 de 4 personne(s) → Nouvelle nasselle 2 (total: 4/4)
-   * - Groupe 5 de 4 personne(s) → Nouvelle nasselle 3 (total: 4/4)
-   * - Groupe 6 de 1 personne(s) → Nouvelle nasselle 4 (total: 1/4)
-   * - Groupe 7 de 1 personne(s) → Nasselle 4 (total: 2/4)
-   * - Nombre total de nasselles utilisées : 4
-   * - Nasselle 1 : 4/4 personnes
-   * - Nasselle 2 : 4/4 personnes
-   * - Nasselle 3 : 4/4 personnes
-   * - Nasselle 4 : 2/4 personnes
-   * - Réponse : 4 nasselles, 2 personnes dans la dernière nasselle
+   * - Il y a 7 blocs B. Il faut donc en retirer un.
+   * - Il y a 4 blocs L. Rien à retirer.
+   * - Il y a 6 blocs Z. Rien à retirer.
+   * - Il y a 4 blocs N. Rien à retirer.
+   * - Il y a 2 blocs P. Rien à retirer.
+   * - Il y a 9 blocs Y. Il faut donc en retirer un.
+   * - Il y a 8 blocs B. Rien à retirer.
+   * - Il y a 6 blocs L. Rien à retirer.
+   * - Il y a 7 blocs Z. Il faut donc en retirer un.
+   * - Il y a 4 blocs N. Rien à retirer.
+   * - Il y a 2 blocs P. Rien à retirer.
+   * - Il y a 6 blocs Y. Rien à retirer.
+   * - Il y a 5 blocs B. Il faut donc en retirer un.
+   * - Il y a 5 blocs L. Il faut donc en retirer un.
+   * - Il y a 9 blocs Z. Il faut donc en retirer un.
+   * - Il y a 5 blocs N. Il faut donc en retirer un.
+   * - Il y a 7 blocs P. Il faut donc en retirer un.
+   * - Il y a 7 blocs Y. Il faut donc en retirer un.
+   * - Il y a 3 blocs B. Il faut donc en retirer un.
+   * - Il y a 7 blocs L. Il faut donc en retirer un.
+   * - Il y a 8 blocs Z. Rien à retirer.
+   * - Il y a 5 blocs N. Il faut donc en retirer un.
    */
   const testingData = {
-    groups: [1, 2, 1, 4, 4, 1, 1],
+    blocs:
+      "BBBBBBBLLLLZZZZZZNNNNPPYYYYYYYYYBBBBBBBBLLLLLLZZZZZZZNNNNPPYYYYYYBBBBBLLLLLZZZZZZZZZNNNNNPPPPPPPYYYYYYYBBBLLLLLLLZZZZZZZZNNNNN",
   };
-  const expected = "4_2";
+  const expected = "BYZBLZNPYBLN";
   const result = solve(testingData);
 
   if (result !== expected) {

@@ -1,70 +1,292 @@
 /**
- * Tainix Challenge: AlgoPark-2-la-grande-Roue [ALGOPARK_2]
+ * Tainix Challenge: Pixels-de-couleurs [PAINT]
  *
- * Challenge Token: 6576dde8905447476e3ab01107cda08060ff3060369b1310e0293cc33c2f95e9aa1bf1740359a100
+ * Challenge Token: 42854d988056777ed34ad50cff66c7d75bb58efdf1b15ac63d05b6b8ae1333b6dfaf39ce88c38aa4
  *
  * Commands:
- * tainix test ALGOPARK_2
- * tainix submit ALGOPARK_2
+ * tainix test PAINT
+ * tainix submit PAINT
  */
 
 const inputData = {
-  groups: [3, 2, 2, 3, 1, 3, 1, 4, 2, 2, 4, 2, 3],
+  map: [
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "r",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "r",
+    "r",
+    "w",
+    "w",
+    "r",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "r",
+    "r",
+    "w",
+    "w",
+    "w",
+    "r",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "r",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "r",
+    "w",
+    "w",
+    "w",
+    "w",
+    "r",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "r",
+    "w",
+    "w",
+    "r",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "w",
+    "r",
+    "w",
+    "w",
+    "w",
+    "r",
+    "w",
+    "w",
+    "r",
+    "r",
+    "w",
+  ],
 };
 
 type InputData = typeof inputData;
 
-function solve({ groups }: InputData): string {
-  let currentGondolaOccupation = 0;
+function solve({ map }: InputData): string {
+  // make 10x10 grid
+  const chunkSize = 10;
+  const grid = [];
 
-  const gondolas: number[] = [];
+  for (let i = 0; i < map.length; i += chunkSize) {
+    const chunk = map.slice(i, i + chunkSize);
+    grid.push(chunk);
+  }
 
-  for (const groupSize of groups) {
-    if (currentGondolaOccupation + groupSize > 4) {
-      // Start a new gondola
-      gondolas.push(currentGondolaOccupation);
-      currentGondolaOccupation = groupSize;
-    } else {
-      // Add to the current gondola
-      currentGondolaOccupation += groupSize;
+  console.log("Init Grid:");
+  printGrid(grid);
+
+  for (let row = 0; row < grid.length; row++) {
+    for (let col = 0; col < grid[row].length; col++) {
+      const cell = grid[row][col];
+      if (cell === "r") {
+        fillAround(grid, row, col);
+      }
     }
   }
-  if (currentGondolaOccupation > 0) {
-    gondolas.push(currentGondolaOccupation);
+
+  console.log("Modified Grid:");
+  printGrid(grid);
+
+  return grid
+    .flat()
+    .filter((cell) => cell === "b")
+    .length.toString();
+}
+
+function printGrid(grid: string[][]): void {
+  for (const row of grid) {
+    console.log(row.join(" "));
   }
+}
 
-  console.log("Gondolas occupation:", gondolas);
+function fillAround(grid: string[][], row: number, col: number): void {
+  const directions = [
+    [-1, 0], // up
+    [1, 0], // down
+    [0, -1], // left
+    [0, 1], // right
+  ];
 
-  const totalGondolas = gondolas.length;
-  const lastGondolaOccupancy = gondolas.at(-1) ?? 0;
+  for (const [dRow, dCol] of directions) {
+    const newRow = row + dRow;
+    const newCol = col + dCol;
 
-  return `${totalGondolas}_${lastGondolaOccupancy}`;
+    if (
+      newRow >= 0 &&
+      newRow < grid.length &&
+      newCol >= 0 &&
+      newCol < grid[newRow].length &&
+      grid[newRow][newCol] === "w"
+    ) {
+      grid[newRow][newCol] = "b";
+    }
+  }
 }
 
 // --- Tests ---
 function test(): void {
   /*
    * Problem Steps:
-   * - Groupes à faire passer : 1, 2, 1, 4, 4, 1, 1
-   * - Attribution des nasselles (4 places maximum par nasselle) :
-   * - Groupe 1 de 1 personne(s) → Nouvelle nasselle 1 (total: 1/4)
-   * - Groupe 2 de 2 personne(s) → Nasselle 1 (total: 3/4)
-   * - Groupe 3 de 1 personne(s) → Nasselle 1 (total: 4/4)
-   * - Groupe 4 de 4 personne(s) → Nouvelle nasselle 2 (total: 4/4)
-   * - Groupe 5 de 4 personne(s) → Nouvelle nasselle 3 (total: 4/4)
-   * - Groupe 6 de 1 personne(s) → Nouvelle nasselle 4 (total: 1/4)
-   * - Groupe 7 de 1 personne(s) → Nasselle 4 (total: 2/4)
-   * - Nombre total de nasselles utilisées : 4
-   * - Nasselle 1 : 4/4 personnes
-   * - Nasselle 2 : 4/4 personnes
-   * - Nasselle 3 : 4/4 personnes
-   * - Nasselle 4 : 2/4 personnes
-   * - Réponse : 4 nasselles, 2 personnes dans la dernière nasselle
+   * No steps found for this challenge.
    */
   const testingData = {
-    groups: [1, 2, 1, 4, 4, 1, 1],
+    map: [
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "r",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "r",
+      "w",
+      "w",
+      "r",
+      "w",
+      "r",
+      "w",
+      "r",
+      "w",
+      "w",
+      "r",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "r",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "r",
+      "w",
+      "w",
+      "w",
+      "w",
+      "r",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+      "w",
+    ],
   };
-  const expected = "4_2";
+  const expected = "25";
   const result = solve(testingData);
 
   if (result !== expected) {
