@@ -1,22 +1,34 @@
 /**
- * Tainix Challenge: Braquage-du-coffre-2 [BANK_1]
+ * Tainix Challenge: one-piece-marineford [ONE_PIECE_1]
  * 
- * Challenge Token: f27a979d97fcdf4a1d2f0ebbb58b6f82f9c9d48f78b889faf975d8470534e4635f74cec636feca71
+ * Challenge Token: b6da65da873682614a07a003dab9b17b54102f31f7eb8a2324253ac4f2b726d80e02b758b86ff63b
  * 
  * Commands:
- * tainix test BANK_1
- * tainix submit BANK_1
+ * tainix test ONE_PIECE_1
+ * tainix submit ONE_PIECE_1
  */
 
 const inputData = {
-  "actions": "BBBBBBBIIIIIIIIIIIIIMMMMMMMMMMMEEEEEEEEEEEEEE",
-  "references": "B:10 I:7 M:4 E:7",
-  "time": 178
+  "enemies": [
+    "MHK_9",
+    "SMK_4",
+    "GRP_5",
+    "AKJ_3",
+    "KBY_1",
+    "AKU_7",
+    "KZR_8"
+  ],
+  "allies": [
+    "MRC_4",
+    "BGY_5",
+    "BOA_1",
+    "JMB_2"
+  ]
 };
 
 type InputData = typeof inputData;
 
-function solve({ actions, references, time }: InputData): string {
+function solve({ allies, enemies }: InputData): string {
   return "";
 }
 
@@ -24,19 +36,32 @@ function solve({ actions, references, time }: InputData): string {
 function test(): void {
  /*
    * Problem Steps:
-   * - Il faut 60 de temps pour les actions "Break".
-   * - Il faut 63 de temps pour les actions "IT".
-   * - Il faut 8 de temps pour les actions "Money".
-   * - Il faut 80 de temps pour les actions "Prepare".
-   * - Ils ont donc besoin de 211 de temps et la police arrive dans 216.
-   * - Ils peuvent s'échapper ! Il leur restait 5 de temps.
+   * - Smoker a une puissance de 3. Luffy se bat seul.
+   * - Garp a une puissance de 8. Baggy vient prêter main forte à Luffy.
+   * - Aokiji a une puissance de 7. Marco vient prêter main forte à Luffy.
+   * - Kizaru a une puissance de 5. Boa Hancock vient prêter main forte à Luffy.
+   * - Mihawk a une puissance de 9. Aucun allié n'est assez fort pour aider Luffy, il est mis KO et doit être soigné.
+   * - Akainu a une puissance de 4. Jimbe vient prêter main forte à Luffy.
+   * - Kobby a une puissance de 1. Luffy se bat seul.
    */
   const testingData = {
-  "actions": "BBBBBBIIIIIIIIIMMMMMMMMEEEEEEEEEE",
-  "references": "B:10 I:7 M:1 E:8",
-  "time": 216
+  "allies": [
+    "BOA_2",
+    "MRC_4",
+    "BGY_5",
+    "JMB_1"
+  ],
+  "enemies": [
+    "SMK_3",
+    "GRP_8",
+    "AKJ_7",
+    "KZR_5",
+    "MHK_9",
+    "AKU_4",
+    "KBY_1"
+  ]
 };
-  const expected = "ESCAPE5";
+  const expected = "LFY_BGY_MRC_BOA_IVK_JMB_LFY";
   const result = solve(testingData);
 
   if (result !== expected) {
@@ -151,18 +176,6 @@ export function logObject<T>(obj: T, objName?: string): T {
   const label = objName ? `Logging ${objName}:` : "Logging:";
   console.log(label, obj);
   return obj;
-}
-
-/**
- * Splits a string into an array of substrings, where each substring consists of
- * consecutive identical characters from the original string.
- * For example, "aaabbc" becomes ["aaa", "bb", "c"].
- * 
- * @param input The input string to split.
- * @returns An array of substrings with consecutive identical characters.
- */
-export function splitOnCharChange(input: string): string[] {
-  return input.match(/(.)\1*/g) || [];
 }
 
 // --- Command Handling ---

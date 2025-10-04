@@ -1,42 +1,58 @@
 /**
- * Tainix Challenge: Braquage-du-coffre-2 [BANK_1]
- * 
- * Challenge Token: f27a979d97fcdf4a1d2f0ebbb58b6f82f9c9d48f78b889faf975d8470534e4635f74cec636feca71
- * 
+ * Tainix Challenge: WALL-E-5-retrouve-EVE [WALL_E_5]
+ *
+ * Challenge Token: 4c669c76c8a2de829da51660e7d991e4c8f786cfc05b6290e040613335a98c4173e7ae9367b9ce2c
+ *
  * Commands:
- * tainix test BANK_1
- * tainix submit BANK_1
+ * tainix test WALL_E_5
+ * tainix submit WALL_E_5
  */
 
 const inputData = {
-  "actions": "BBBBBBBIIIIIIIIIIIIIMMMMMMMMMMMEEEEEEEEEEEEEE",
-  "references": "B:10 I:7 M:4 E:7",
-  "time": 178
+  shots: [2, 5, 8, 5, 8, 3, 6, 5, 2, 7, 6, 8, 5, 2, 4, 4, 7],
 };
 
 type InputData = typeof inputData;
 
-function solve({ actions, references, time }: InputData): string {
-  return "";
+function solve({ shots }: InputData): string {
+  let totalDistance = 0;
+  let currentSpeed = 0;
+
+  for (const targetSpeed of shots) {
+    const speedDiff = targetSpeed - currentSpeed;
+    const acceleration = speedDiff > 0;
+    let newDistance = 0;
+    if (acceleration) {
+      newDistance = 3.14 * targetSpeed;
+    } else {
+      newDistance = (2 * 3.14 * targetSpeed) / 3;
+    }
+    console.log(
+      `From ${currentSpeed} to ${targetSpeed} (${
+        acceleration ? "accélération" : "décélération"
+      }) => ${newDistance}`
+    );
+    // Fix the newDistance to 2 decimal places before adding to totalDistance
+    totalDistance += parseFloat(newDistance.toFixed(2));
+    currentSpeed = targetSpeed;
+  }
+
+  return totalDistance.toFixed(2);
 }
 
 // --- Tests ---
 function test(): void {
- /*
+  /*
    * Problem Steps:
-   * - Il faut 60 de temps pour les actions "Break".
-   * - Il faut 63 de temps pour les actions "IT".
-   * - Il faut 8 de temps pour les actions "Money".
-   * - Il faut 80 de temps pour les actions "Prepare".
-   * - Ils ont donc besoin de 211 de temps et la police arrive dans 216.
-   * - Ils peuvent s'échapper ! Il leur restait 5 de temps.
+   * - Accélération (0 =&gt; 9) avancée de 28.26 m.
+   * - Décélération (9 =&gt; 3) avancée de 6.28 m.
+   * - Accélération (3 =&gt; 8) avancée de 25.12 m.
+   * - Décélération (8 =&gt; 6) avancée de 12.56 m.
    */
   const testingData = {
-  "actions": "BBBBBBIIIIIIIIIMMMMMMMMEEEEEEEEEE",
-  "references": "B:10 I:7 M:1 E:8",
-  "time": 216
-};
-  const expected = "ESCAPE5";
+    shots: [9, 3, 8, 6],
+  };
+  const expected = "72.22";
   const result = solve(testingData);
 
   if (result !== expected) {
@@ -151,18 +167,6 @@ export function logObject<T>(obj: T, objName?: string): T {
   const label = objName ? `Logging ${objName}:` : "Logging:";
   console.log(label, obj);
   return obj;
-}
-
-/**
- * Splits a string into an array of substrings, where each substring consists of
- * consecutive identical characters from the original string.
- * For example, "aaabbc" becomes ["aaa", "bb", "c"].
- * 
- * @param input The input string to split.
- * @returns An array of substrings with consecutive identical characters.
- */
-export function splitOnCharChange(input: string): string[] {
-  return input.match(/(.)\1*/g) || [];
 }
 
 // --- Command Handling ---

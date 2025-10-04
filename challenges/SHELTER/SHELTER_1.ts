@@ -1,42 +1,65 @@
 /**
- * Tainix Challenge: Braquage-du-coffre-2 [BANK_1]
- * 
- * Challenge Token: f27a979d97fcdf4a1d2f0ebbb58b6f82f9c9d48f78b889faf975d8470534e4635f74cec636feca71
- * 
+ * Tainix Challenge: Bug-out-Shelter-1-Le-signal [SHELTER_1]
+ *
+ * Challenge Token: 77aa03ba00d7e583a13d1268d4bd23233bccc9ae46d755b7f9f096c40a63953e2ee629d48c88dedb
+ *
  * Commands:
- * tainix test BANK_1
- * tainix submit BANK_1
+ * tainix test SHELTER_1
+ * tainix submit SHELTER_1
  */
 
 const inputData = {
-  "actions": "BBBBBBBIIIIIIIIIIIIIMMMMMMMMMMMEEEEEEEEEEEEEE",
-  "references": "B:10 I:7 M:4 E:7",
-  "time": 178
+  message_x:
+    "Tango Romeo Oscar India Sierra Space Zulu Echo Romeo Oscar Space Delta Echo Uniform X-ray Space Sierra Echo Papa Tango",
+  message_y:
+    "November Echo Uniform Foxtrot Space Quebec Uniform Alpha Tango Romeo Echo Space Hotel Uniform India Tango Space Quebec Uniform Alpha Tango Romeo Echo",
 };
 
 type InputData = typeof inputData;
 
-function solve({ actions, references, time }: InputData): string {
-  return "";
+function solve({ message_x, message_y }: InputData): string {
+  return `${messageToNumber(message_x)}_${messageToNumber(message_y)}`;
+}
+
+function messageToNumber(message: string): string {
+  const numberStringToNumber: Record<string, number> = {
+    ZERO: 0,
+    UN: 1,
+    DEUX: 2,
+    TROIS: 3,
+    QUATRE: 4,
+    CINQ: 5,
+    SIX: 6,
+    SEPT: 7,
+    HUIT: 8,
+    NEUF: 9,
+  };
+
+  const letters = message.split(" Space ").map((subMessage) =>
+    subMessage
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+  );
+
+  return letters
+    .map((numberString) => numberStringToNumber[numberString])
+    .join("");
 }
 
 // --- Tests ---
 function test(): void {
- /*
+  /*
    * Problem Steps:
-   * - Il faut 60 de temps pour les actions "Break".
-   * - Il faut 63 de temps pour les actions "IT".
-   * - Il faut 8 de temps pour les actions "Money".
-   * - Il faut 80 de temps pour les actions "Prepare".
-   * - Ils ont donc besoin de 211 de temps et la police arrive dans 216.
-   * - Ils peuvent s'échapper ! Il leur restait 5 de temps.
+   * - Si tu es perdu.e, demande à Jack Bauer un peu d'aide.
    */
   const testingData = {
-  "actions": "BBBBBBIIIIIIIIIMMMMMMMMEEEEEEEEEE",
-  "references": "B:10 I:7 M:1 E:8",
-  "time": 216
-};
-  const expected = "ESCAPE5";
+    message_x:
+      "Quebec Uniform Alpha Tango Romeo Echo Space Delta Echo Uniform X-ray Space Delta Echo Uniform X-ray Space Sierra India X-ray",
+    message_y:
+      "Uniform November Space Hotel Uniform India Tango Space Charlie India November Quebec Space Zulu Echo Romeo Oscar",
+  };
+  const expected = "4226_1850";
   const result = solve(testingData);
 
   if (result !== expected) {
@@ -157,7 +180,7 @@ export function logObject<T>(obj: T, objName?: string): T {
  * Splits a string into an array of substrings, where each substring consists of
  * consecutive identical characters from the original string.
  * For example, "aaabbc" becomes ["aaa", "bb", "c"].
- * 
+ *
  * @param input The input string to split.
  * @returns An array of substrings with consecutive identical characters.
  */

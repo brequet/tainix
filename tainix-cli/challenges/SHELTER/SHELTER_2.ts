@@ -1,22 +1,30 @@
 /**
- * Tainix Challenge: Braquage-du-coffre-2 [BANK_1]
+ * Tainix Challenge: Bug-out-Shelter-2-Premiers-indices [SHELTER_2]
  * 
- * Challenge Token: f27a979d97fcdf4a1d2f0ebbb58b6f82f9c9d48f78b889faf975d8470534e4635f74cec636feca71
+ * Challenge Token: a3d17f0d3c048c8d54bef76d92681b6260ec51bbb11029c03563832e0bda79cfa8896c3f41e26d82
  * 
  * Commands:
- * tainix test BANK_1
- * tainix submit BANK_1
+ * tainix test SHELTER_2
+ * tainix submit SHELTER_2
  */
 
 const inputData = {
-  "actions": "BBBBBBBIIIIIIIIIIIIIMMMMMMMMMMMEEEEEEEEEEEEEE",
-  "references": "B:10 I:7 M:4 E:7",
-  "time": 178
+  "message": "etteiluJ|kcaJ|aneL|yrakaB|erreiP|ruhtrA|leaM|ennA|enimaL|nahtaN|mahcI|demahoM|noraA|sinA",
+  "registre": [
+    "Mohamed",
+    "David",
+    "Richard",
+    "Alix",
+    "Bakary",
+    "Juliette",
+    "Arthur",
+    "Mael"
+  ]
 };
 
 type InputData = typeof inputData;
 
-function solve({ actions, references, time }: InputData): string {
+function solve({ message, registre }: InputData): string {
   return "";
 }
 
@@ -24,19 +32,34 @@ function solve({ actions, references, time }: InputData): string {
 function test(): void {
  /*
    * Problem Steps:
-   * - Il faut 60 de temps pour les actions "Break".
-   * - Il faut 63 de temps pour les actions "IT".
-   * - Il faut 8 de temps pour les actions "Money".
-   * - Il faut 80 de temps pour les actions "Prepare".
-   * - Ils ont donc besoin de 211 de temps et la police arrive dans 216.
-   * - Ils peuvent s'échapper ! Il leur restait 5 de temps.
+   * - Kevin n'est pas dans le registre.
+   * - Zola n'est pas dans le registre.
+   * - Hugo n'est pas dans le registre.
+   * - Tom n'est pas dans le registre.
+   * - Jelani n'est pas dans le registre.
+   * - Nolan n'est pas dans le registre.
+   * - Mila n'est pas dans le registre.
+   * - Rachid est dans le registre.
+   * - Aicha n'est pas dans le registre.
+   * - Pierre n'est pas dans le registre.
+   * - Louis est dans le registre.
+   * - Samir est dans le registre.
+   * - Walim n'est pas dans le registre.
+   * - Fatou n'est pas dans le registre.
+   * - Lena n'est pas dans le registre.
    */
   const testingData = {
-  "actions": "BBBBBBIIIIIIIIIMMMMMMMMEEEEEEEEEE",
-  "references": "B:10 I:7 M:1 E:8",
-  "time": 216
+  "message": "niveK|aloZ|oguH|moT|inaleJ|naloN|aliM|dihcaR|ahciA|erreiP|siuoL|rimaS|milaW|uotaF|aneL",
+  "registre": [
+    "Samir",
+    "Nour",
+    "Icham",
+    "Kim",
+    "Rachid",
+    "Louis"
+  ]
 };
-  const expected = "ESCAPE5";
+  const expected = "Rachid|Louis|Samir";
   const result = solve(testingData);
 
   if (result !== expected) {

@@ -1,12 +1,15 @@
 use crate::config::Config;
 use crate::error::AppError;
 use crate::tainix::models::{ChallengeInputData, SubmissionResponse};
+use crate::tainix::parser;
 use base64::Engine;
 use base64::engine::general_purpose;
 use reqwest::header;
 use serde_json::json;
 
 const TAINIX_BASE_URL: &str = "https://tainix.fr";
+
+const TAINIX_RESTRICTED_API: &str = "Engine non accessible";
 
 pub struct TainixClient<'a> {
     client: reqwest::Client,
@@ -48,6 +51,26 @@ impl<'a> TainixClient<'a> {
         Ok(html)
     }
 
+    async fn fetch_challenge_input_from_sandbox(
+        &self,
+        challenge_code: &str,
+    ) -> Result<ChallengeInputData, AppError> {
+        let url = format!("{}/sandbox/play/{}", TAINIX_BASE_URL, challenge_code);
+        let cookie_value = format!("PHPSESSID={}", self.config.phpsessid);
+
+        let html = self
+            .client
+            .get(&url)
+            .header(header::COOKIE, cookie_value)
+            .send()
+            .await?
+            .error_for_status()?
+            .text()
+            .await?;
+
+        parser::parse_sandbox_page_for_input_data(&html)
+    }
+
     pub async fn fetch_challenge_input_data(
         &self,
         challenge_code: &str,
@@ -67,9 +90,22 @@ impl<'a> TainixClient<'a> {
             .await?;
 
         if !input_data.success {
-            return Err(AppError::Api(
+            if input_data
+                .errors
+                .map(|err| err.contains(TAINIX_RESTRICTED_API))
+                .unwrap_or(false)
+            {
+                println!(
+                    "Note: API access is restricted. Falling back to sandbox scraping method."
+                );
+                return self
+                    .fetch_challenge_input_from_sandbox(challenge_code)
+                    .await;
+            } else {
+                return Err(AppError::Api(
                 "Failed to fetch challenge input data. Your TAINIX_USER_TOKEN may be invalid or expired.".to_string(),
             ));
+            }
         }
 
         Ok(input_data)

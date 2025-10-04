@@ -1,42 +1,73 @@
 /**
- * Tainix Challenge: Braquage-du-coffre-2 [BANK_1]
- * 
- * Challenge Token: f27a979d97fcdf4a1d2f0ebbb58b6f82f9c9d48f78b889faf975d8470534e4635f74cec636feca71
- * 
+ * Tainix Challenge: Wade-Wilson-part-en-mission [DEADPOOL]
+ *
+ * Challenge Token: b3816445ad8d035230c3a6fc6f125a295bbe70c9d6cf7d2aa970342d09aae2d933c9c13261309561
+ *
  * Commands:
- * tainix test BANK_1
- * tainix submit BANK_1
+ * tainix test DEADPOOL
+ * tainix submit DEADPOOL
  */
 
 const inputData = {
-  "actions": "BBBBBBBIIIIIIIIIIIIIMMMMMMMMMMMEEEEEEEEEEEEEE",
-  "references": "B:10 I:7 M:4 E:7",
-  "time": 178
+  steps: "H__T__E_SHE_TS__SSTS_",
 };
 
 type InputData = typeof inputData;
 
-function solve({ actions, references, time }: InputData): string {
-  return "";
+function solve({ steps }: InputData): string {
+  let hp = 100;
+  let time = 0; // in seconds
+
+  for (const action of steps) {
+    switch (action) {
+      case "_":
+        time += 10;
+        hp = Math.min(hp + 5, 100);
+        break;
+      case "S":
+        time += 10;
+        hp -= 10;
+        break;
+      case "H":
+        time += 30;
+        hp -= 25;
+        break;
+      case "T":
+        time += 120;
+        hp -= 50;
+        break;
+      case "E":
+        hp -= 100;
+        break;
+    }
+
+    if (hp <= 0) {
+      time += 60 * 5;
+      hp = 100;
+    }
+  }
+
+  const minutes = Math.floor(time / 60);
+  const seconds = time % 60;
+
+  return `${minutes}min_${seconds}sec_${hp}hp`;
 }
 
 // --- Tests ---
 function test(): void {
- /*
+  /*
    * Problem Steps:
-   * - Il faut 60 de temps pour les actions "Break".
-   * - Il faut 63 de temps pour les actions "IT".
-   * - Il faut 8 de temps pour les actions "Money".
-   * - Il faut 80 de temps pour les actions "Prepare".
-   * - Ils ont donc besoin de 211 de temps et la police arrive dans 216.
-   * - Ils peuvent s'échapper ! Il leur restait 5 de temps.
+   * - BOUUUMMMM UNE EXPLOSION !!! 100hp de moins en 0sec.
+   * - Il est temps de se reposer pour reprendre des forces.
+   * - Rien ne s'est passé, tu récupères 5hp en 10sec.
+   * - Des armes lourdes, plus compliqué, mais pas impossible, 25hp de moins en 30sec.
+   * - Ce ne serait pas un tank ?! 50hp de moins en 120sec.
+   * - Rien ne s'est passé, tu récupères 5hp en 10sec.
    */
   const testingData = {
-  "actions": "BBBBBBIIIIIIIIIMMMMMMMMEEEEEEEEEE",
-  "references": "B:10 I:7 M:1 E:8",
-  "time": 216
-};
-  const expected = "ESCAPE5";
+    steps: "E_HT_",
+  };
+  const expected = "7min_50sec_30hp";
   const result = solve(testingData);
 
   if (result !== expected) {
@@ -151,18 +182,6 @@ export function logObject<T>(obj: T, objName?: string): T {
   const label = objName ? `Logging ${objName}:` : "Logging:";
   console.log(label, obj);
   return obj;
-}
-
-/**
- * Splits a string into an array of substrings, where each substring consists of
- * consecutive identical characters from the original string.
- * For example, "aaabbc" becomes ["aaa", "bb", "c"].
- * 
- * @param input The input string to split.
- * @returns An array of substrings with consecutive identical characters.
- */
-export function splitOnCharChange(input: string): string[] {
-  return input.match(/(.)\1*/g) || [];
 }
 
 // --- Command Handling ---

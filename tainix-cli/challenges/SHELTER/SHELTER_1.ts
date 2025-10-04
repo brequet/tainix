@@ -1,22 +1,21 @@
 /**
- * Tainix Challenge: Braquage-du-coffre-2 [BANK_1]
+ * Tainix Challenge: Bug-out-Shelter-1-Le-signal [SHELTER_1]
  * 
- * Challenge Token: f27a979d97fcdf4a1d2f0ebbb58b6f82f9c9d48f78b889faf975d8470534e4635f74cec636feca71
+ * Challenge Token: eb3376b03b42528eb873daac132ea9436738c0987d7e842ec4eb4320d7be6dfdc552846340321637
  * 
  * Commands:
- * tainix test BANK_1
- * tainix submit BANK_1
+ * tainix test SHELTER_1
+ * tainix submit SHELTER_1
  */
 
 const inputData = {
-  "actions": "BBBBBBBIIIIIIIIIIIIIMMMMMMMMMMMEEEEEEEEEEEEEE",
-  "references": "B:10 I:7 M:4 E:7",
-  "time": 178
+  "message_x": "Delta Echo Uniform X-ray Space Hotel Uniform India Tango Space Delta Echo Uniform X-ray Space Sierra India X-ray",
+  "message_y": "Tango Romeo Oscar India Sierra Space Sierra India X-ray Space Sierra Echo Papa Tango Space November Echo Uniform Foxtrot"
 };
 
 type InputData = typeof inputData;
 
-function solve({ actions, references, time }: InputData): string {
+function solve({ message_x, message_y }: InputData): string {
   return "";
 }
 
@@ -24,19 +23,13 @@ function solve({ actions, references, time }: InputData): string {
 function test(): void {
  /*
    * Problem Steps:
-   * - Il faut 60 de temps pour les actions "Break".
-   * - Il faut 63 de temps pour les actions "IT".
-   * - Il faut 8 de temps pour les actions "Money".
-   * - Il faut 80 de temps pour les actions "Prepare".
-   * - Ils ont donc besoin de 211 de temps et la police arrive dans 216.
-   * - Ils peuvent s'échapper ! Il leur restait 5 de temps.
+   * - Si tu es perdu.e, demande à Jack Bauer un peu d'aide.
    */
   const testingData = {
-  "actions": "BBBBBBIIIIIIIIIMMMMMMMMEEEEEEEEEE",
-  "references": "B:10 I:7 M:1 E:8",
-  "time": 216
+  "message_x": "Hotel Uniform India Tango Space Sierra India X-ray Space November Echo Uniform Foxtrot Space Delta Echo Uniform X-ray",
+  "message_y": "Sierra India X-ray Space Hotel Uniform India Tango Space November Echo Uniform Foxtrot Space Hotel Uniform India Tango"
 };
-  const expected = "ESCAPE5";
+  const expected = "8692_6898";
   const result = solve(testingData);
 
   if (result !== expected) {

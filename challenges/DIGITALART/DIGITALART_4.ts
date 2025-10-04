@@ -1,42 +1,291 @@
 /**
- * Tainix Challenge: Braquage-du-coffre-2 [BANK_1]
- * 
- * Challenge Token: f27a979d97fcdf4a1d2f0ebbb58b6f82f9c9d48f78b889faf975d8470534e4635f74cec636feca71
- * 
+ * Tainix Challenge: CTC-4-Le-jeu-des-dames [DIGITALART_4]
+ *
+ * Challenge Token: 5642b2bd51a3a51b3fdd5590ec9e9bc18d52367e936e5d2ee9906148e1975e48176e1f4848895bdc
+ *
  * Commands:
- * tainix test BANK_1
- * tainix submit BANK_1
+ * tainix test DIGITALART_4
+ * tainix submit DIGITALART_4
  */
 
 const inputData = {
-  "actions": "BBBBBBBIIIIIIIIIIIIIMMMMMMMMMMMEEEEEEEEEEEEEE",
-  "references": "B:10 I:7 M:4 E:7",
-  "time": 178
+  map: [
+    "N",
+    "C",
+    "N",
+    "PF",
+    "N",
+    "PH",
+    "N",
+    "N",
+    "PO",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "PQ",
+    "N",
+    "N",
+    "PK",
+    "PN",
+    "C",
+    "N",
+    "PG",
+    "N",
+    "N",
+    "PA",
+    "N",
+    "PB",
+    "N",
+    "N",
+    "N",
+    "PL",
+    "C",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "PU",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "C",
+    "N",
+    "N",
+    "PT",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "PE",
+    "N",
+    "N",
+    "PJ",
+    "N",
+    "N",
+    "C",
+    "N",
+    "C",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "PD",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "PM",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "N",
+    "PS",
+    "PP",
+    "C",
+    "N",
+    "N",
+    "N",
+  ],
 };
 
 type InputData = typeof inputData;
 
-function solve({ actions, references, time }: InputData): string {
-  return "";
+function solve({ map }: InputData): string {
+  const chunkSize = 10;
+  const grid = [];
+
+  for (let i = 0; i < map.length; i += chunkSize) {
+    const chunk = map.slice(i, i + chunkSize);
+    grid.push(chunk);
+  }
+
+  let reachablePeople: string[] = [];
+
+  for (let row = 0; row < grid.length; row++) {
+    for (let col = 0; col < grid[row].length; col++) {
+      const cell = grid[row][col];
+      if (cell !== "C" && cell !== "N") {
+        if (!isCameraAroundPoint(grid, row, col)) {
+          reachablePeople.push(cell);
+        }
+      }
+    }
+  }
+
+  reachablePeople.sort();
+
+  return reachablePeople.join("");
+}
+
+function isCameraAroundPoint(
+  grid: string[][],
+  row: number,
+  col: number
+): boolean {
+  const directions = [
+    [-1, -1], // up-left
+    [-1, 1], // up-right
+    [1, -1], // down-left
+    [1, 1], // down-right
+    [-1, 0], // up
+    [1, 0], // down
+    [0, -1], // left
+    [0, 1], // right
+  ];
+
+  for (const [dRow, dCol] of directions) {
+    const newRow = row + dRow;
+    const newCol = col + dCol;
+
+    if (
+      newRow >= 0 &&
+      newRow < grid.length &&
+      newCol >= 0 &&
+      newCol < grid[newRow].length &&
+      grid[newRow][newCol] === "C"
+    ) {
+      return true;
+    }
+  }
+  return false;
 }
 
 // --- Tests ---
 function test(): void {
- /*
+  /*
    * Problem Steps:
-   * - Il faut 60 de temps pour les actions "Break".
-   * - Il faut 63 de temps pour les actions "IT".
-   * - Il faut 8 de temps pour les actions "Money".
-   * - Il faut 80 de temps pour les actions "Prepare".
-   * - Ils ont donc besoin de 211 de temps et la police arrive dans 216.
-   * - Ils peuvent s'échapper ! Il leur restait 5 de temps.
+   * - Ci-dessous les positions des caméras et de chaque personne :
    */
   const testingData = {
-  "actions": "BBBBBBIIIIIIIIIMMMMMMMMEEEEEEEEEE",
-  "references": "B:10 I:7 M:1 E:8",
-  "time": 216
-};
-  const expected = "ESCAPE5";
+    map: [
+      "N",
+      "C",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "C",
+      "N",
+      "C",
+      "PK",
+      "PO",
+      "N",
+      "PA",
+      "C",
+      "N",
+      "N",
+      "PB",
+      "N",
+      "N",
+      "C",
+      "N",
+      "N",
+      "N",
+      "PJ",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "PQ",
+      "C",
+      "N",
+      "PC",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "PL",
+      "N",
+      "N",
+      "PN",
+      "N",
+      "N",
+      "N",
+      "N",
+      "PH",
+      "N",
+      "PU",
+      "PD",
+      "N",
+      "PP",
+      "N",
+      "C",
+      "PT",
+      "N",
+      "C",
+      "PM",
+      "N",
+      "PI",
+      "PG",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "N",
+      "PF",
+      "N",
+      "PR",
+      "N",
+      "N",
+      "N",
+      "PS",
+      "N",
+      "N",
+      "N",
+      "N",
+    ],
+  };
+  const expected = "PAPCPDPFPGPIPNPPPRPSPU";
   const result = solve(testingData);
 
   if (result !== expected) {
@@ -151,18 +400,6 @@ export function logObject<T>(obj: T, objName?: string): T {
   const label = objName ? `Logging ${objName}:` : "Logging:";
   console.log(label, obj);
   return obj;
-}
-
-/**
- * Splits a string into an array of substrings, where each substring consists of
- * consecutive identical characters from the original string.
- * For example, "aaabbc" becomes ["aaa", "bb", "c"].
- * 
- * @param input The input string to split.
- * @returns An array of substrings with consecutive identical characters.
- */
-export function splitOnCharChange(input: string): string[] {
-  return input.match(/(.)\1*/g) || [];
 }
 
 // --- Command Handling ---

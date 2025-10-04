@@ -1,8 +1,8 @@
-use crate::error::AppError;
 use crate::tainix::models::ChallengeDetails;
+use crate::{error::AppError, tainix::models::ChallengeInputData};
 use regex::Regex;
 use scraper::{Element, Html, Selector};
-use serde_json;
+use serde_json::{self, Map, Value};
 
 pub fn parse_challenge_page(
     challenge_name: &str,
@@ -19,6 +19,88 @@ pub fn parse_challenge_page(
     };
 
     Ok(details)
+}
+
+pub fn parse_sandbox_page_for_input_data(
+    html_content: &str,
+) -> Result<ChallengeInputData, AppError> {
+    let document = Html::parse_document(html_content);
+
+    let token = extract_sandbox_token(&document)?;
+    let input = parse_sandbox_script_variables(&document)?;
+
+    Ok(ChallengeInputData {
+        input,
+        token,
+        success: true,
+        errors: None,
+    })
+}
+
+fn extract_sandbox_token(document: &Html) -> Result<String, AppError> {
+    let selector = Selector::parse(r#"input[type="hidden"][name="token"]"#)
+        .map_err(|_| AppError::Parsing("Failed to parse sandbox token selector".into()))?;
+
+    document
+        .select(&selector)
+        .next()
+        .and_then(|el| el.value().attr("value"))
+        .map(|s| s.to_string())
+        .ok_or_else(|| AppError::Parsing("Could not find sandbox token in HTML".into()))
+}
+
+fn parse_sandbox_script_variables(document: &Html) -> Result<Value, AppError> {
+    let selector = Selector::parse("#editor")
+        .map_err(|_| AppError::Parsing("Failed to parse #editor selector".into()))?;
+
+    let editor_text = document
+        .select(&selector)
+        .next()
+        .ok_or_else(|| AppError::Parsing("Could not find editor element with id='editor'".into()))?
+        .text()
+        .collect::<String>();
+
+    let parts: Vec<&str> = editor_text.split("// NE PAS TOUCHER").collect();
+    if parts.len() < 3 {
+        return Err(AppError::Parsing(
+            "Could not find the expected comment blocks".into(),
+        ));
+    }
+    let code_block = parts[1];
+
+    let mut data = Map::new();
+
+    for line in code_block.lines() {
+        let trimmed_line = line.trim();
+        if !trimmed_line.starts_with("const") {
+            continue;
+        }
+
+        if let Some((declaration, value_str)) = trimmed_line.split_once('=') {
+            if let Some(key) = declaration
+                .split_whitespace()
+                .nth(1)
+                .and_then(|s| s.split(':').next())
+            {
+                let value_cleaned = value_str.trim().trim_end_matches(';');
+
+                let value = match serde_json::from_str(value_cleaned) {
+                    Ok(json_value) => json_value,
+                    Err(_) => Value::String(value_cleaned.to_string()),
+                };
+
+                data.insert(key.to_string(), value);
+            }
+        }
+    }
+
+    if data.is_empty() {
+        return Err(AppError::Parsing(
+            "Failed to parse any variables from the script block".into(),
+        ));
+    }
+
+    Ok(Value::Object(data))
 }
 
 fn extract_challenge_code(document: &Html) -> Result<String, AppError> {

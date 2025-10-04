@@ -1,42 +1,58 @@
 /**
- * Tainix Challenge: Braquage-du-coffre-2 [BANK_1]
- * 
- * Challenge Token: f27a979d97fcdf4a1d2f0ebbb58b6f82f9c9d48f78b889faf975d8470534e4635f74cec636feca71
- * 
+ * Tainix Challenge: Le-maitre-des-cles [BANK_2]
+ *
+ * Challenge Token: 6a7927455f69cbb26d20937b1ae729a2f84fb1413dd148a220054888f2f781b93f02f9ea9aafd041
+ *
  * Commands:
- * tainix test BANK_1
- * tainix submit BANK_1
+ * tainix test BANK_2
+ * tainix submit BANK_2
  */
 
 const inputData = {
-  "actions": "BBBBBBBIIIIIIIIIIIIIMMMMMMMMMMMEEEEEEEEEEEEEE",
-  "references": "B:10 I:7 M:4 E:7",
-  "time": 178
+  doors: "7,6,6,1,3,8,6,1,5,2,5,8,2",
+  operations: 14,
 };
 
 type InputData = typeof inputData;
 
-function solve({ actions, references, time }: InputData): string {
-  return "";
+function solve({ doors, operations }: InputData): string {
+  return doors
+    .split(",")
+    .map((doorLevel) => {
+      const level = parseInt(doorLevel);
+      if (level === 1) return operations % 2 === 0 ? "C" : "O";
+
+      if (operations % (level + 1) === 0) return "C";
+      else if ((operations + 1) % (level + 1) === 0) return "O";
+      else return "X";
+    })
+    .join("");
 }
 
 // --- Tests ---
 function test(): void {
- /*
+  /*
    * Problem Steps:
-   * - Il faut 60 de temps pour les actions "Break".
-   * - Il faut 63 de temps pour les actions "IT".
-   * - Il faut 8 de temps pour les actions "Money".
-   * - Il faut 80 de temps pour les actions "Prepare".
-   * - Ils ont donc besoin de 211 de temps et la police arrive dans 216.
-   * - Ils peuvent s'échapper ! Il leur restait 5 de temps.
+   * - Opération 1 : XXOX
+   * - Opération 2 : XXCX
+   * - Opération 3 : XXOX
+   * - Opération 4 : OOCX
+   * - Opération 5 : CCOO
+   * - Opération 6 : XXCC
+   * - Opération 7 : XXOX
+   * - Opération 8 : XXCX
+   * - Opération 9 : OOOX
+   * - Opération 10 : CCCX
+   * - Opération 11 : XXOO
+   * - Opération 12 : XXCC
+   * - Opération 13 : XXOX
+   * - Opération 14 : OOCX
    */
   const testingData = {
-  "actions": "BBBBBBIIIIIIIIIMMMMMMMMEEEEEEEEEE",
-  "references": "B:10 I:7 M:1 E:8",
-  "time": 216
-};
-  const expected = "ESCAPE5";
+    doors: "4,4,1,5",
+    operations: 14,
+  };
+  const expected = "OOCX";
   const result = solve(testingData);
 
   if (result !== expected) {
@@ -151,18 +167,6 @@ export function logObject<T>(obj: T, objName?: string): T {
   const label = objName ? `Logging ${objName}:` : "Logging:";
   console.log(label, obj);
   return obj;
-}
-
-/**
- * Splits a string into an array of substrings, where each substring consists of
- * consecutive identical characters from the original string.
- * For example, "aaabbc" becomes ["aaa", "bb", "c"].
- * 
- * @param input The input string to split.
- * @returns An array of substrings with consecutive identical characters.
- */
-export function splitOnCharChange(input: string): string[] {
-  return input.match(/(.)\1*/g) || [];
 }
 
 // --- Command Handling ---

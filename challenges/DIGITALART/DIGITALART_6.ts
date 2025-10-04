@@ -1,42 +1,54 @@
 /**
- * Tainix Challenge: Braquage-du-coffre-2 [BANK_1]
- * 
- * Challenge Token: f27a979d97fcdf4a1d2f0ebbb58b6f82f9c9d48f78b889faf975d8470534e4635f74cec636feca71
- * 
+ * Tainix Challenge: CTC-6-Machine-arriere [DIGITALART_6]
+ *
+ * Challenge Token: 9af36d24497e5c656e2209d0303262a146fe20236d3ef323f4198808813ec8a68f1e362ebd611323
+ *
  * Commands:
- * tainix test BANK_1
- * tainix submit BANK_1
+ * tainix test DIGITALART_6
+ * tainix submit DIGITALART_6
  */
 
 const inputData = {
-  "actions": "BBBBBBBIIIIIIIIIIIIIMMMMMMMMMMMEEEEEEEEEEEEEE",
-  "references": "B:10 I:7 M:4 E:7",
-  "time": 178
+  base: 22,
+  arts: ["Crepuscule Techno #1", "Circuit Citadel #5"],
 };
 
 type InputData = typeof inputData;
 
-function solve({ actions, references, time }: InputData): string {
-  return "";
+function solve({ arts, base }: InputData): string {
+  const intoAsciiValues = arts.map((art) => {
+    return art.split("").map((char) => char.charCodeAt(0));
+  });
+
+  console.log(intoAsciiValues);
+
+  const intoBinaries = intoAsciiValues.map((asciiArr) => {
+    return asciiArr.map((ascii) => ascii.toString(2)).join("");
+  });
+
+  console.log(intoBinaries);
+
+  const intoBases = intoBinaries.map((binary) => {
+    return parseInt(binary, 2).toString(base);
+  });
+
+  console.log(intoBases);
+
+  return intoBases.map((baseStr) => baseStr.slice(0, 10)).join("_");
 }
 
 // --- Tests ---
 function test(): void {
- /*
+  /*
    * Problem Steps:
-   * - Il faut 60 de temps pour les actions "Break".
-   * - Il faut 63 de temps pour les actions "IT".
-   * - Il faut 8 de temps pour les actions "Money".
-   * - Il faut 80 de temps pour les actions "Prepare".
-   * - Ils ont donc besoin de 211 de temps et la police arrive dans 216.
-   * - Ils peuvent s'échapper ! Il leur restait 5 de temps.
+   * - "Reve de Donnees #3" est crypté en 8e7bc00785eee488d7ba8dcb85b1c25 puis réduit à 8e7bc00785.
+   * - "Data Depths #7" est crypté en 97351a46be50e51413c9d09e puis réduit à 97351a46be.
    */
   const testingData = {
-  "actions": "BBBBBBIIIIIIIIIMMMMMMMMEEEEEEEEEE",
-  "references": "B:10 I:7 M:1 E:8",
-  "time": 216
-};
-  const expected = "ESCAPE5";
+    arts: ["Reve de Donnees #3", "Data Depths #7"],
+    base: 15,
+  };
+  const expected = "8e7bc00785_97351a46be";
   const result = solve(testingData);
 
   if (result !== expected) {
@@ -151,18 +163,6 @@ export function logObject<T>(obj: T, objName?: string): T {
   const label = objName ? `Logging ${objName}:` : "Logging:";
   console.log(label, obj);
   return obj;
-}
-
-/**
- * Splits a string into an array of substrings, where each substring consists of
- * consecutive identical characters from the original string.
- * For example, "aaabbc" becomes ["aaa", "bb", "c"].
- * 
- * @param input The input string to split.
- * @returns An array of substrings with consecutive identical characters.
- */
-export function splitOnCharChange(input: string): string[] {
-  return input.match(/(.)\1*/g) || [];
 }
 
 // --- Command Handling ---

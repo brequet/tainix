@@ -1,42 +1,74 @@
 /**
- * Tainix Challenge: Braquage-du-coffre-2 [BANK_1]
- * 
- * Challenge Token: f27a979d97fcdf4a1d2f0ebbb58b6f82f9c9d48f78b889faf975d8470534e4635f74cec636feca71
- * 
+ * Tainix Challenge: Bug-out-Shelter-2-Premiers-indices [SHELTER_2]
+ *
+ * Challenge Token: 6fa9809c35952c85edb5cc379aba65db6b33bd59ae397fdb996d30ffa06a2515266178d9f740a221
+ *
  * Commands:
- * tainix test BANK_1
- * tainix submit BANK_1
+ * tainix test SHELTER_2
+ * tainix submit SHELTER_2
  */
 
 const inputData = {
-  "actions": "BBBBBBBIIIIIIIIIIIIIMMMMMMMMMMMEEEEEEEEEEEEEE",
-  "references": "B:10 I:7 M:4 E:7",
-  "time": 178
+  message:
+    "ruhtrA|erbmA|miraK|eilemA|demahoM|ifoK|anelE|assI|aeL|evE|yerduA|seluJ|sinA",
+  registre: [
+    "Anis",
+    "Liam",
+    "Guillaume",
+    "Rose",
+    "Kofi",
+    "Ambre",
+    "Audrey",
+    "Lea",
+  ],
 };
 
 type InputData = typeof inputData;
 
-function solve({ actions, references, time }: InputData): string {
-  return "";
+function solve({ message, registre }: InputData): string {
+  const names = message
+    .split("|")
+    .map((name) => name.split("").reverse().join(""));
+  const filteredNames = names.filter((name) => registre.includes(name));
+
+  return filteredNames.join("|");
 }
 
 // --- Tests ---
 function test(): void {
- /*
+  /*
    * Problem Steps:
-   * - Il faut 60 de temps pour les actions "Break".
-   * - Il faut 63 de temps pour les actions "IT".
-   * - Il faut 8 de temps pour les actions "Money".
-   * - Il faut 80 de temps pour les actions "Prepare".
-   * - Ils ont donc besoin de 211 de temps et la police arrive dans 216.
-   * - Ils peuvent s'échapper ! Il leur restait 5 de temps.
+   * - Kendji n'est pas dans le registre.
+   * - Martine est dans le registre.
+   * - Leo est dans le registre.
+   * - Manon n'est pas dans le registre.
+   * - Mila n'est pas dans le registre.
+   * - Ambre est dans le registre.
+   * - Audrey n'est pas dans le registre.
+   * - Anis n'est pas dans le registre.
+   * - Lucas n'est pas dans le registre.
+   * - Issa n'est pas dans le registre.
+   * - Rachid n'est pas dans le registre.
+   * - David n'est pas dans le registre.
+   * - Gabin est dans le registre.
+   * - Tiago n'est pas dans le registre.
+   * - Mariama est dans le registre.
    */
   const testingData = {
-  "actions": "BBBBBBIIIIIIIIIMMMMMMMMEEEEEEEEEE",
-  "references": "B:10 I:7 M:1 E:8",
-  "time": 216
-};
-  const expected = "ESCAPE5";
+    message:
+      "ijdneK|enitraM|oeL|nonaM|aliM|erbmA|yerduA|sinA|sacuL|assI|dihcaR|divaD|nibaG|ogaiT|amairaM",
+    registre: [
+      "Martine",
+      "Rose",
+      "Fatou",
+      "Louis",
+      "Ambre",
+      "Mariama",
+      "Leo",
+      "Gabin",
+    ],
+  };
+  const expected = "Martine|Leo|Ambre|Gabin|Mariama";
   const result = solve(testingData);
 
   if (result !== expected) {
@@ -157,7 +189,7 @@ export function logObject<T>(obj: T, objName?: string): T {
  * Splits a string into an array of substrings, where each substring consists of
  * consecutive identical characters from the original string.
  * For example, "aaabbc" becomes ["aaa", "bb", "c"].
- * 
+ *
  * @param input The input string to split.
  * @returns An array of substrings with consecutive identical characters.
  */

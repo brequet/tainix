@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ChallengeData {
@@ -19,9 +18,10 @@ pub struct ChallengeDetails {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ChallengeInputData {
-    pub input: HashMap<String, Value>,
+    pub input: Value,
     pub token: String,
     pub success: bool,
+    pub errors: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

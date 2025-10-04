@@ -3,7 +3,7 @@ use crate::config::Config;
 use crate::scaffolding::get_challenge_file_path;
 use anyhow::{Context, Result};
 use std::io::{self, Write};
-use std::process::{self, Command};
+use std::process::Command;
 
 /// Main handler for the 'test' command.
 /// Executes the TypeScript test for a given challenge.
