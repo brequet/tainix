@@ -1,35 +1,110 @@
 /**
- * Tainix Challenge: Bug-out-Shelter-1-Le-signal [SHELTER_1]
- * 
- * Challenge Token: eb3376b03b42528eb873daac132ea9436738c0987d7e842ec4eb4320d7be6dfdc552846340321637
- * 
+ * Tainix Challenge: Greenoid-7 [GREENOID_7]
+ *
+ * Challenge Token: d7832d9ff2d531c708e3fb6e011972d9daa47a9bee8e6d9f28a78b4e76c39bda32feb33eca9176f3
+ *
  * Commands:
- * tainix test SHELTER_1
- * tainix submit SHELTER_1
+ * tainix test GREENOID_7
+ * tainix submit GREENOID_7
  */
 
 const inputData = {
-  "message_x": "Delta Echo Uniform X-ray Space Hotel Uniform India Tango Space Delta Echo Uniform X-ray Space Sierra India X-ray",
-  "message_y": "Tango Romeo Oscar India Sierra Space Sierra India X-ray Space Sierra Echo Papa Tango Space November Echo Uniform Foxtrot"
+  keys: [
+    "7mn35c871gkl",
+    "vuw6221gm62w6",
+    "x9x64g7x1h247",
+    "11j45z47ep",
+    "t6hb4342x73",
+    "vk72st2q9238",
+    "bt778y65x251",
+    "1t5h576zeq67",
+  ],
 };
 
 type InputData = typeof inputData;
 
-function solve({ message_x, message_y }: InputData): string {
-  return "";
+function solve({ keys }: InputData): string {
+  const firstTransformations = keys.map((key) =>
+    sumUp(key.split("").map(charToValue))
+  );
+
+  // console.log(firstTransformations);
+
+  const to8bitsBynaryArray = firstTransformations.map((num) =>
+    num.toString(2).padStart(8, "0")
+  );
+
+  // console.log(to8bitsBynaryArray);
+
+  const compositions = new Set<string>();
+  for (let i = 0; i < to8bitsBynaryArray.length - 1; i++) {
+    for (let j = i + 1; j < to8bitsBynaryArray.length; j++) {
+      compositions.add(compose(to8bitsBynaryArray[i], to8bitsBynaryArray[j]));
+    }
+  }
+
+  // console.log(compositions);
+
+  const ascSortedCompositions = Array.from(compositions)
+    .sort()
+    .map((bin) => parseInt(bin, 2))
+    .map((num) => num % 36)
+    .map(valueToChar);
+  // console.log(ascSortedCompositions);
+
+  return ascSortedCompositions.join("");
+}
+
+function charToValue(char: string): number {
+  if (char >= "0" && char <= "9") {
+    return parseInt(char, 10);
+  } else if (char >= "a" && char <= "z") {
+    return char.charCodeAt(0) - "a".charCodeAt(0) + 10;
+  }
+  throw new Error(`Invalid character: ${char}`);
+}
+
+function valueToChar(value: number): string {
+  if (value >= 0 && value <= 9) {
+    return value.toString();
+  } else if (value >= 10 && value <= 35) {
+    return String.fromCharCode(value - 10 + "a".charCodeAt(0));
+  }
+  throw new Error(`Invalid value: ${value}`);
+}
+
+function compose(binA: string, binB: string): string {
+  const res = [];
+  for (let i = 0; i < binA.length; i++) {
+    res.push(binA[i] === binB[i] ? 1 : 0);
+  }
+  return res.join("");
 }
 
 // --- Tests ---
 function test(): void {
- /*
+  /*
    * Problem Steps:
-   * - Si tu es perdu.e, demande à Jack Bauer un peu d'aide.
+   * - --------- Extrait système ----------
+   * - Composition des clés 84gu3k5p31 et pgg8zp15g986
+   * - Les valeurs numériques sont 115 et 170
+   * - Les valeurs binaires sur 8 bits sont 01110011 et 10101010
+   * - La composition est 00100110
+   * - -------- Fin extrait système -------
    */
   const testingData = {
-  "message_x": "Hotel Uniform India Tango Space Sierra India X-ray Space November Echo Uniform Foxtrot Space Delta Echo Uniform X-ray",
-  "message_y": "Sierra India X-ray Space Hotel Uniform India Tango Space November Echo Uniform Foxtrot Space Hotel Uniform India Tango"
-};
-  const expected = "8692_6898";
+    keys: [
+      "84gu3k5p31",
+      "pgg8zp15g986",
+      "h935745wia9",
+      "5sci3434g7",
+      "ayn5pi3949359",
+      "f4a618l28z88",
+      "25a77u6xd92",
+      "e67e9a39g664",
+    ],
+  };
+  const expected = "6ahlsuy257dpk8cdfghjkoqrsuz1";
   const result = solve(testingData);
 
   if (result !== expected) {
@@ -150,7 +225,7 @@ export function logObject<T>(obj: T, objName?: string): T {
  * Splits a string into an array of substrings, where each substring consists of
  * consecutive identical characters from the original string.
  * For example, "aaabbc" becomes ["aaa", "bb", "c"].
- * 
+ *
  * @param input The input string to split.
  * @returns An array of substrings with consecutive identical characters.
  */

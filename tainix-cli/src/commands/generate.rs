@@ -10,6 +10,8 @@ use anyhow::{Context, Result};
 /// Main handler for the 'generate' command.
 /// Orchestrates fetching, parsing, rendering, and file writing.
 pub async fn handle_generate(challenge_name: String, config: &Config) -> Result<()> {
+    let challenge_name = parse_challenge_name(&challenge_name);
+
     println!("Generating challenge: {}...", challenge_name);
 
     let client = TainixClient::new(config);
@@ -51,6 +53,10 @@ pub async fn handle_generate(challenge_name: String, config: &Config) -> Result<
         .and_then(open_editor);
 
     Ok(())
+}
+
+fn parse_challenge_name(input: &str) -> &str {
+    input.split('/').last().unwrap_or(input)
 }
 
 fn open_editor(challenge_file_path: PathBuf) -> Result<()> {

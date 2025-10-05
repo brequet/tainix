@@ -1,67 +1,76 @@
 /**
  * Tainix Challenge: one-piece-marineford [ONE_PIECE_1]
- * 
- * Challenge Token: b6da65da873682614a07a003dab9b17b54102f31f7eb8a2324253ac4f2b726d80e02b758b86ff63b
- * 
+ *
+ * Challenge Token: a063fe19744b3e2425fef873c45eba30038f628cec6d1896e8636bff5b591b36e6de7a29115b83c2
+ *
  * Commands:
  * tainix test ONE_PIECE_1
  * tainix submit ONE_PIECE_1
  */
 
 const inputData = {
-  "enemies": [
-    "MHK_9",
-    "SMK_4",
-    "GRP_5",
-    "AKJ_3",
-    "KBY_1",
-    "AKU_7",
-    "KZR_8"
-  ],
-  "allies": [
-    "MRC_4",
-    "BGY_5",
-    "BOA_1",
-    "JMB_2"
-  ]
+  allies: ["BOA_2", "JMB_4", "MRC_5", "BGY_1"],
+  enemies: ["SMK_5", "AKJ_8", "AKU_9", "KZR_7", "MHK_3", "GRP_4", "KBY_1"],
 };
 
 type InputData = typeof inputData;
 
+const LUFFY_POWER = 3;
+const HEALER_ALLY = "IVK";
+
 function solve({ allies, enemies }: InputData): string {
-  return "";
+  const alliesParsed = allies
+    .map(parseCharacter)
+    .sort((a, b) => a.power - b.power);
+  const enemiesParsed = enemies.map(parseCharacter);
+
+  const results: string[] = [];
+
+  for (const enemy of enemiesParsed) {
+    console.log("Facing enemy:", enemy);
+    if (LUFFY_POWER >= enemy.power) {
+      console.log("Luffy can handle this one alone.");
+      results.push("LFY");
+    } else {
+      const allyIndex = alliesParsed.findIndex(
+        (ally) => ally.power + LUFFY_POWER >= enemy.power
+      );
+      if (allyIndex !== -1) {
+        const ally = alliesParsed.splice(allyIndex, 1)[0];
+        console.log(`Ally ${ally.id} comes to help Luffy.`);
+        results.push(`${ally.id}`);
+      } else {
+        console.log("No ally can help Luffy, he is KO and needs healing.");
+        results.push(HEALER_ALLY);
+      }
+    }
+  }
+
+  return results.join("_");
+}
+
+function parseCharacter(character: string): { id: string; power: number } {
+  const [id, powerStr] = character.split("_");
+  return { id, power: parseInt(powerStr, 10) };
 }
 
 // --- Tests ---
 function test(): void {
- /*
+  /*
    * Problem Steps:
+   * - Mihawk a une puissance de 7. Marco vient prêter main forte à Luffy.
    * - Smoker a une puissance de 3. Luffy se bat seul.
-   * - Garp a une puissance de 8. Baggy vient prêter main forte à Luffy.
-   * - Aokiji a une puissance de 7. Marco vient prêter main forte à Luffy.
-   * - Kizaru a une puissance de 5. Boa Hancock vient prêter main forte à Luffy.
-   * - Mihawk a une puissance de 9. Aucun allié n'est assez fort pour aider Luffy, il est mis KO et doit être soigné.
-   * - Akainu a une puissance de 4. Jimbe vient prêter main forte à Luffy.
+   * - Aokiji a une puissance de 4. Baggy vient prêter main forte à Luffy.
+   * - Akainu a une puissance de 8. Boa Hancock vient prêter main forte à Luffy.
+   * - Kizaru a une puissance de 9. Aucun allié n'est assez fort pour aider Luffy, il est mis KO et doit être soigné.
+   * - Garp a une puissance de 5. Jimbe vient prêter main forte à Luffy.
    * - Kobby a une puissance de 1. Luffy se bat seul.
    */
   const testingData = {
-  "allies": [
-    "BOA_2",
-    "MRC_4",
-    "BGY_5",
-    "JMB_1"
-  ],
-  "enemies": [
-    "SMK_3",
-    "GRP_8",
-    "AKJ_7",
-    "KZR_5",
-    "MHK_9",
-    "AKU_4",
-    "KBY_1"
-  ]
-};
-  const expected = "LFY_BGY_MRC_BOA_IVK_JMB_LFY";
+    allies: ["BOA_5", "BGY_1", "JMB_2", "MRC_4"],
+    enemies: ["MHK_7", "SMK_3", "AKJ_4", "AKU_8", "KZR_9", "GRP_5", "KBY_1"],
+  };
+  const expected = "MRC_LFY_BGY_BOA_IVK_JMB_LFY";
   const result = solve(testingData);
 
   if (result !== expected) {
@@ -176,6 +185,18 @@ export function logObject<T>(obj: T, objName?: string): T {
   const label = objName ? `Logging ${objName}:` : "Logging:";
   console.log(label, obj);
   return obj;
+}
+
+/**
+ * Splits a string into an array of substrings, where each substring consists of
+ * consecutive identical characters from the original string.
+ * For example, "aaabbc" becomes ["aaa", "bb", "c"].
+ *
+ * @param input The input string to split.
+ * @returns An array of substrings with consecutive identical characters.
+ */
+export function splitOnCharChange(input: string): string[] {
+  return input.match(/(.)\1*/g) || [];
 }
 
 // --- Command Handling ---

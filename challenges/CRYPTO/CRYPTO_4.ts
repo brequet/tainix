@@ -8,6 +8,22 @@
  * tainix submit CRYPTO_4
  */
 
+/*
+
+Mission
+
+Un code secret à déchiffrer…
+
+Aucune explication, mais quelques exemples dans la donnée « échantillons » qui doivent te permettre de comprendre l’algorithme mis en place pour déchiffrer le code ! Chaque échantillon est construit comme ça :
+
+code:code_dechiffré
+Règles
+
+Pour compléter ce challenge, tu dois retourner la chaîne de caractères qui correspond au décryptage du code.
+
+(Pas besoin de brute force pour résoudre ce challenge)
+*/
+
 const inputData = {
   echantillons: [
     "8170294573261351656802419:oibbngwd",
@@ -21,8 +37,34 @@ const inputData = {
 
 type InputData = typeof inputData;
 
-function solve({ code, echantillons }: InputData): string {
-  return "";
+function solve({ code }: InputData): string {
+  const alphabet = "abcdefghijklmnopqrstuvwxyz";
+
+  const decryptedLength = parseInt(code[0], 10);
+  if (isNaN(decryptedLength) || decryptedLength === 0) {
+    return "";
+  }
+
+  const payload = code.substring(1);
+  if (payload.length === 0) {
+    return "";
+  }
+
+  const chunkSize = Math.floor(payload.length / decryptedLength);
+
+  let result = "";
+
+  for (let i = 0; i < decryptedLength; i++) {
+    const chunkStart = i * chunkSize;
+    const chunkEnd = chunkStart + chunkSize;
+    const chunk = payload.substring(chunkStart, chunkEnd);
+
+    const chunkAsInt = parseInt(chunk, 10);
+    const charIndex = chunkAsInt % 26;
+    result += alphabet[charIndex];
+  }
+
+  return result;
 }
 
 // --- Tests ---
