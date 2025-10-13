@@ -1,7 +1,7 @@
 /**
  * Tainix Challenge: Bug-out-Shelter-3-Connexion-a-distance [SHELTER_3]
  * 
- * Challenge Token: 5ab60288f061615d60704a8f62113d4962883829fec013f90256fa2ddc5dc802c076e6e06307f3b4
+ * Challenge Token: 7a0bbd26995b9c45bd02174da06048ddab065aa884853cac8483be1d92fd5355e3642e9f4fa3f142
  * 
  * Commands:
  * tainix test SHELTER_3
@@ -10,16 +10,16 @@
 
 const inputData = {
   "shelters": [
-    "IAM_E:12_N:15_S:20",
-    "FLA_E:25_N:3_S:27",
-    "PRO_E:35_N:38_S:33",
-    "FJU_E:22_N:1_S:13",
-    "FMJ_E:6_N:5_S:23",
-    "TVL_E:27_N:4_S:11",
-    "IRL_E:5_N:8_S:29",
-    "SES_E:20_N:11_S:10",
-    "IVX_E:22_N:2_S:14",
-    "GBE_E:5_N:1_S:5"
+    "MBT_E:18_N:2_S:17",
+    "IPB_E:26_N:8_S:17",
+    "TMN_E:26_N:12_S:17",
+    "GLL_E:2_N:7_S:10",
+    "PPW_E:30_N:2_S:26",
+    "JAO_E:3_N:3_S:19",
+    "LYS_E:15_N:16_S:16",
+    "ZUO_E:7_N:7_S:5",
+    "YPW_E:28_N:3_S:11",
+    "PRO_E:34_N:40_S:31"
   ]
 };
 
@@ -52,27 +52,27 @@ function solve({ shelters }: InputData): string {
 function test(): void {
   /*
     * Problem Steps:
-    * - Abri PRO : E=33, N=30, S=35 =&gt; Score: 81
-    * - Abri AQN : E=19, N=15, S=17 =&gt; Score: 45
-    * - Abri YFM : E=9, N=12, S=22 =&gt; Score: 33
-    * - Abri FBA : E=30, N=14, S=9 =&gt; Score: 26
-    * - Abri ZVS : E=20, N=12, S=24 =&gt; Score: 40
-    * - Abri ZID : E=14, N=9, S=25 =&gt; Score: 25
-    * - Abri NZF : E=9, N=8, S=19 =&gt; Score: 17
-    * - Meilleur abri : PRO avec un score de 81 (moyenne: 38)
+    * - Abri LRV : E=4, N=8, S=20 =&gt; Score: 15
+    * - Abri IVA : E=2, N=7, S=13 =&gt; Score: 7
+    * - Abri PRO : E=40, N=36, S=37 =&gt; Score: 92
+    * - Abri NSX : E=16, N=6, S=20 =&gt; Score: 20
+    * - Abri TJR : E=8, N=8, S=23 =&gt; Score: 19
+    * - Abri CJC : E=15, N=4, S=20 =&gt; Score: 17
+    * - Abri GPL : E=4, N=4, S=22 =&gt; Score: 13
+    * - Meilleur abri : PRO avec un score de 92 (moyenne: 26)
     */
   const testingData = {
     "shelters": [
-      "PRO_E:33_N:30_S:35",
-      "AQN_E:19_N:15_S:17",
-      "YFM_E:9_N:12_S:22",
-      "FBA_E:30_N:14_S:9",
-      "ZVS_E:20_N:12_S:24",
-      "ZID_E:14_N:9_S:25",
-      "NZF_E:9_N:8_S:19"
+      "LRV_E:4_N:8_S:20",
+      "IVA_E:2_N:7_S:13",
+      "PRO_E:40_N:36_S:37",
+      "NSX_E:16_N:6_S:20",
+      "TJR_E:8_N:8_S:23",
+      "CJC_E:15_N:4_S:20",
+      "GPL_E:4_N:4_S:22"
     ]
   };
-  const expected = "PRO_81_38";
+  const expected = "PRO_92_26";
   const result = solve(testingData);
 
   if (result !== expected) {

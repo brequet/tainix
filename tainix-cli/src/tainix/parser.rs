@@ -51,7 +51,7 @@ fn extract_sandbox_token(document: &Html) -> Result<String, AppError> {
 
 fn parse_sandbox_script_variables(document: &Html) -> Result<Value, AppError> {
     let selector = Selector::parse("#editor")
-        .map_err(|_| AppError::Parsing("Failed to parse #editor selector".into()))?;
+        .map_err(|e| AppError::Parsing(format!("Failed to parse #editor selector: {}", e)))?;
 
     let editor_text = document
         .select(&selector)
@@ -60,13 +60,12 @@ fn parse_sandbox_script_variables(document: &Html) -> Result<Value, AppError> {
         .text()
         .collect::<String>();
 
-    let parts: Vec<&str> = editor_text.split("// NE PAS TOUCHER").collect();
-    if parts.len() < 3 {
-        return Err(AppError::Parsing(
-            "Could not find the expected comment blocks".into(),
-        ));
-    }
-    let code_block = parts[1];
+    let code_block = editor_text
+        .split("// NE PAS TOUCHER")
+        .nth(1)
+        .ok_or_else(|| {
+            AppError::Parsing("Could not find the expected comment-fenced code block".into())
+        })?;
 
     let mut data = Map::new();
 
@@ -77,17 +76,15 @@ fn parse_sandbox_script_variables(document: &Html) -> Result<Value, AppError> {
         }
 
         if let Some((declaration, value_str)) = trimmed_line.split_once('=') {
-            if let Some(key) = declaration
-                .split_whitespace()
-                .nth(1)
-                .and_then(|s| s.split(':').next())
-            {
+            // Extract the variable name
+            if let Some(key) = declaration.split_whitespace().nth(1) {
+                // Clean the value string and make it JSON-compliant
                 let value_cleaned = value_str.trim().trim_end_matches(';');
+                let json_compatible_str = value_cleaned.replace('\'', "\"");
 
-                let value = match serde_json::from_str(value_cleaned) {
-                    Ok(json_value) => json_value,
-                    Err(_) => Value::String(value_cleaned.to_string()),
-                };
+                // Attempt to parse the string as a JSON Value
+                let value = serde_json::from_str(&json_compatible_str)
+                    .unwrap_or_else(|_| Value::String(value_cleaned.to_string()));
 
                 data.insert(key.to_string(), value);
             }
@@ -99,6 +96,8 @@ fn parse_sandbox_script_variables(document: &Html) -> Result<Value, AppError> {
             "Failed to parse any variables from the script block".into(),
         ));
     }
+
+    println!("Parsed input data: {:?}", data);
 
     Ok(Value::Object(data))
 }

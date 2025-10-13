@@ -31,4 +31,11 @@ pub enum Commands {
         #[arg(value_name = "CHALLENGE_CODE")]
         code: String,
     },
+    /// Transpiles a challenge's TypeScript file into an executable JavaScript file
+    #[command()]
+    Js {
+        /// The code of the challenge to transpile (e.g., "BANK1")
+        #[arg(value_name = "CHALLENGE_CODE")]
+        code: String,
+    },
 }

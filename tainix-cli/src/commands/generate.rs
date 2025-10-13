@@ -1,10 +1,9 @@
-use std::path::PathBuf;
-
 use crate::config::Config;
 use crate::scaffolding::{get_challenge_file_path, write_challenge_file};
 use crate::tainix::models::ChallengeData;
 use crate::tainix::{client::TainixClient, parser::parse_challenge_page};
 use crate::templating::render_ts_template;
+use crate::vscode::open_editor;
 use anyhow::{Context, Result};
 
 /// Main handler for the 'generate' command.
@@ -57,21 +56,4 @@ pub async fn handle_generate(challenge_name: String, config: &Config) -> Result<
 
 fn parse_challenge_name(input: &str) -> &str {
     input.split('/').last().unwrap_or(input)
-}
-
-fn open_editor(challenge_file_path: PathBuf) -> Result<()> {
-    let status = std::process::Command::new("cmd")
-        .arg("/C")
-        .arg("code")
-        .arg(challenge_file_path)
-        .status();
-
-    let status = status
-        .context("Failed to execute 'code' command. Is VS Code installed and in your PATH?")?;
-
-    if !status.success() {
-        println!("Warning: 'code' command finished with a non-zero status.");
-    }
-
-    Ok(())
 }
